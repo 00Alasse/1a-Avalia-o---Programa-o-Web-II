@@ -65,7 +65,9 @@ CREATE TABLE IF NOT EXISTS `atendimentos` (
     `valor_cobrado` DECIMAL(12,2) NULL,
     `observacoes_clinicas` TEXT NULL,
     `situacao` VARCHAR(255) NULL,
+    `usuario_id` INT NULL,
     CONSTRAINT fk_atendimentos_animal_id FOREIGN KEY (`animal_id`) REFERENCES `animais`(`id`),
     CONSTRAINT fk_atendimentos_veterinario_id FOREIGN KEY (`veterinario_id`) REFERENCES `veterinarios`(`id`),
-    CONSTRAINT fk_atendimentos_procedimento_id FOREIGN KEY (`procedimento_id`) REFERENCES `procedimentos`(`id`)
+    CONSTRAINT fk_atendimentos_procedimento_id FOREIGN KEY (`procedimento_id`) REFERENCES `procedimentos`(`id`),
+    CONSTRAINT fk_atendimentos_usuario_id FOREIGN KEY (`usuario_id`) REFERENCES `usuarios`(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

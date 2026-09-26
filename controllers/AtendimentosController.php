@@ -66,11 +66,19 @@ class AtendimentosController extends Controller
         $sql .= ' ORDER BY `id` DESC';
         // ----- scaffold:pesquisa fim -----
 
+        $registros = $this->modelo->consultar($sql, $parametros);
+
+        // RF13: Totais calculados sobre os resultados filtrados
+        $totalAtendimentos = count($registros);
+        $somaValores = array_sum(array_column($registros, 'valor_cobrado'));
+
         $this->view('atendimentos/index', [
-            'titulo'    => 'Atendimentos',
-            'registros' => $this->modelo->consultar($sql, $parametros),
-            'pesquisa'  => $pesquisa,
-            'veterinarios' => $this->modelo->veterinarios(),
+            'titulo'            => 'Atendimentos',
+            'registros'         => $registros,
+            'pesquisa'          => $pesquisa,
+            'veterinarios'      => $this->modelo->veterinarios(),
+            'totalAtendimentos' => $totalAtendimentos,
+            'somaValores'       => $somaValores,
         ]);
     }
 
@@ -96,13 +104,14 @@ class AtendimentosController extends Controller
         $this->exigirFormularioValido();
 
         $dados = [
-            'animal_id' => $this->post('animal_id'),
-            'veterinario_id' => $this->post('veterinario_id'),
-            'procedimento_id' => $this->post('procedimento_id'),
-            'data_hora' => $this->post('data_hora'),
-            'valor_cobrado' => $this->post('valor_cobrado'),
+            'animal_id'            => $this->post('animal_id'),
+            'veterinario_id'       => $this->post('veterinario_id'),
+            'procedimento_id'      => $this->post('procedimento_id'),
+            'data_hora'            => $this->post('data_hora'),
+            'valor_cobrado'        => $this->post('valor_cobrado'),
             'observacoes_clinicas' => $this->post('observacoes_clinicas'),
-            'situacao' => $this->post('situacao'),
+            'situacao'             => $this->post('situacao'),
+            'usuario_id'           => usuario_id(), // RF18: Gravado da sessao
         ];
 
         $erros = $this->modelo->validar($dados);
@@ -117,7 +126,7 @@ class AtendimentosController extends Controller
         $this->redirecionar('atendimentos/ver/' . $id);
     }
 
-    /** GET /atendimentos/ver/1 */
+        /** GET /atendimentos/ver/1 */
     public function ver(string $id): void
     {
         $this->exigirAutenticacao();
@@ -128,9 +137,12 @@ class AtendimentosController extends Controller
             $this->naoEncontrado();
         }
 
+        $usuario = !empty($registro['usuario_id']) ? (new \Modelos\Usuario())->buscar($registro['usuario_id']) : null;
+
         $this->view('atendimentos/ver', [
             'titulo'   => 'Atendimento',
             'registro' => $registro,
+            'usuario'  => $usuario,
         ]);
     }
 
