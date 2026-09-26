@@ -55,3 +55,33 @@ CREATE TABLE IF NOT EXISTS `animais` (
     CONSTRAINT fk_animais_tutor_id FOREIGN KEY (`tutor_id`) REFERENCES `tutores`(`id`),
     CONSTRAINT fk_animais_especie_id FOREIGN KEY (`especie_id`) REFERENCES `especies`(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `atendimentos` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `animal_id` INT NULL,
+    `veterinario_id` INT NULL,
+    `procedimento_id` INT NULL,
+    `data_hora` DATETIME NULL,
+    `valor_cobrado` DECIMAL(12,2) NULL,
+    `observacoes_clinicas` TEXT NULL,
+    `situacao` VARCHAR(255) NULL,
+    `usuario_id` INT NULL,
+    CONSTRAINT fk_atendimentos_animal_id FOREIGN KEY (`animal_id`) REFERENCES `animais`(`id`),
+    CONSTRAINT fk_atendimentos_veterinario_id FOREIGN KEY (`veterinario_id`) REFERENCES `veterinarios`(`id`),
+    CONSTRAINT fk_atendimentos_procedimento_id FOREIGN KEY (`procedimento_id`) REFERENCES `procedimentos`(`id`),
+    CONSTRAINT fk_atendimentos_usuario_id FOREIGN KEY (`usuario_id`) REFERENCES `usuarios`(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `vacinas` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `animal_id` INT NULL,
+    `veterinario_id` INT NULL,
+    `nome_vacina` VARCHAR(255) NULL,
+    `lote` VARCHAR(255) NULL,
+    `data_aplicacao` DATE NULL,
+    `data_retorno` DATE NULL,
+    `usuario_id` INT NULL,
+    CONSTRAINT fk_vacinas_animal_id FOREIGN KEY (`animal_id`) REFERENCES `animais`(`id`),
+    CONSTRAINT fk_vacinas_veterinario_id FOREIGN KEY (`veterinario_id`) REFERENCES `veterinarios`(`id`),
+    CONSTRAINT fk_vacinas_usuario_id FOREIGN KEY (`usuario_id`) REFERENCES `usuarios`(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

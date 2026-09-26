@@ -33,5 +33,7 @@ return [
     ['rota' => 'veterinarios', 'texto' => 'Veterinários', 'auth' => 'sim'],
     ['rota' => 'procedimentos', 'texto' => 'Procedimentos', 'auth' => 'sim'],
     ['rota' => 'animais', 'texto' => 'Animais', 'auth' => 'sim'],
+    ['rota' => 'atendimentos', 'texto' => 'Atendimentos', 'auth' => 'sim'],
+    ['rota' => 'vacinas', 'texto' => 'Vacinas', 'auth' => 'sim'],
     // scaffold:crud
 ];

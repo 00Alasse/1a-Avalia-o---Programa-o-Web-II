@@ -120,6 +120,7 @@ class AnimaisController extends Controller
     }
 
     /** GET /animais/ver/1 */
+       /** GET /animais/ver/1 */
     public function ver(string $id): void
     {
         $this->exigirAutenticacao();
@@ -130,9 +131,48 @@ class AnimaisController extends Controller
             $this->naoEncontrado();
         }
 
+        // RF07: Dados do tutor e da especie
+        $tutor = !empty($registro['tutor_id']) ? (new \Modelos\Tutor())->buscar($registro['tutor_id']) : null;
+        $especie = !empty($registro['especie_id']) ? (new \Modelos\Especie())->buscar($registro['especie_id']) : null;
+
+        // RF07: Idade calculada a partir da data de nascimento
+        $idadeTexto = 'Não informada';
+        if (!empty($registro['data_nascimento'])) {
+            $nasc = new \DateTime($registro['data_nascimento']);
+            $hoje = new \DateTime();
+            $diff = $nasc->diff($hoje);
+            if ($diff->y > 0) {
+                $idadeTexto = $diff->y . ' ano(s)' . ($diff->m > 0 ? ' e ' . $diff->m . ' mês(es)' : '');
+            } else {
+                $idadeTexto = $diff->m . ' mês(es) e ' . $diff->d . ' dia(s)';
+            }
+        }
+
+        // RF07: Historico de atendimentos deste animal
+        $sqlAtendimentos = "SELECT a.*, v.nome AS veterinario_nome, p.descricao AS procedimento_nome 
+                            FROM atendimentos a 
+                            LEFT JOIN veterinarios v ON v.id = a.veterinario_id 
+                            LEFT JOIN procedimentos p ON p.id = a.procedimento_id 
+                            WHERE a.animal_id = ? 
+                            ORDER BY a.data_hora DESC";
+        $atendimentos = (new \Modelos\Atendimento())->consultar($sqlAtendimentos, [$id]);
+
+        // RF07: Historico de vacinas deste animal
+        $sqlVacinas = "SELECT vac.*, v.nome AS veterinario_nome 
+                       FROM vacinas vac 
+                       LEFT JOIN veterinarios v ON v.id = vac.veterinario_id 
+                       WHERE vac.animal_id = ? 
+                       ORDER BY vac.data_aplicacao DESC";
+        $vacinas = (new \Modelos\Vacina())->consultar($sqlVacinas, [$id]);
+
         $this->view('animais/ver', [
-            'titulo'   => 'Animal',
-            'registro' => $registro,
+            'titulo'       => 'Detalhes do Animal',
+            'registro'     => $registro,
+            'tutor'        => $tutor,
+            'especie'      => $especie,
+            'idadeTexto'   => $idadeTexto,
+            'atendimentos' => $atendimentos,
+            'vacinas'      => $vacinas,
         ]);
     }
 
