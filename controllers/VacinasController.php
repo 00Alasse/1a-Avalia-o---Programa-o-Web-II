@@ -33,7 +33,7 @@ class VacinasController extends Controller
         $this->exigirAutenticacao();
 
         $this->view('vacinas/formulario', [
-            'titulo'   => 'Novo Vacina',
+            'titulo'   => 'Nova Vacina',
             'registro' => null,
             'animais' => $this->modelo->animais(),
             'veterinarios' => $this->modelo->veterinarios(),
@@ -65,7 +65,7 @@ class VacinasController extends Controller
 
         $id = $this->modelo->criar($dados);
 
-        $this->mensagem('sucesso', 'Vacina criado com sucesso.');
+        $this->mensagem('sucesso', 'Vacina criada com sucesso.');
         $this->redirecionar('vacinas/ver/' . $id);
     }
 
@@ -136,7 +136,7 @@ class VacinasController extends Controller
 
         $this->modelo->atualizar($id, $dados);
 
-        $this->mensagem('sucesso', 'Vacina atualizado com sucesso.');
+        $this->mensagem('sucesso', 'Vacina atualizada com sucesso.');
         $this->redirecionar('vacinas/ver/' . $id);
     }
 
@@ -225,7 +225,7 @@ class VacinasController extends Controller
             $this->naoEncontrado();
         }
 
-        $this->mensagem('sucesso', 'Vacina excluido com sucesso.');
+        $this->mensagem('sucesso', 'Vacina excluída com sucesso.');
         $this->redirecionar('vacinas');
     }
 }
