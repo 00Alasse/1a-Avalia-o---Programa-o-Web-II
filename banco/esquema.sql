@@ -40,3 +40,18 @@ CREATE TABLE IF NOT EXISTS `procedimentos` (
     `valor` DECIMAL(12,2) NULL,
     `duracao_minutos` INT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `animais` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `nome` VARCHAR(255) NULL,
+    `raca` VARCHAR(255) NULL,
+    `data_nascimento` DATE NULL,
+    `sexo` VARCHAR(255) NULL,
+    `peso` DECIMAL(12,2) NULL,
+    `castrado` TINYINT(1) NULL,
+    `observacoes` TEXT NULL,
+    `tutor_id` INT NULL,
+    `especie_id` INT NULL,
+    CONSTRAINT fk_animais_tutor_id FOREIGN KEY (`tutor_id`) REFERENCES `tutores`(`id`),
+    CONSTRAINT fk_animais_especie_id FOREIGN KEY (`especie_id`) REFERENCES `especies`(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
