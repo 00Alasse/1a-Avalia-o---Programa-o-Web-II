@@ -24,3 +24,12 @@ CREATE TABLE IF NOT EXISTS `tutores` (
     `endereco` VARCHAR(255) NULL,
     `data_cliente` DATE NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `veterinarios` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `nome` VARCHAR(255) NULL,
+    `crmv` VARCHAR(255) NULL,
+    `especialidade` VARCHAR(255) NULL,
+    `telefone` VARCHAR(255) NULL,
+    `ativo` TINYINT(1) NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
