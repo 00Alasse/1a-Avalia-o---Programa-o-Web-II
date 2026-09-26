@@ -28,10 +28,10 @@
 
 return [
     ['rota' => '', 'texto' => 'Inicio'],
-    ['rota' => 'especies', 'texto' => 'Especies'],
-    ['rota' => 'tutores', 'texto' => 'Tutores'],
-    ['rota' => 'veterinarios', 'texto' => 'Veterinarios'],
-    ['rota' => 'procedimentos', 'texto' => 'Procedimentos'],
-    ['rota' => 'animais', 'texto' => 'Animais'],
+    ['rota' => 'especies', 'texto' => 'Especies', 'auth' => 'sim'],
+    ['rota' => 'tutores', 'texto' => 'Tutores', 'auth' => 'sim'],
+    ['rota' => 'veterinarios', 'texto' => 'Veterinarios', 'auth' => 'sim'],
+    ['rota' => 'procedimentos', 'texto' => 'Procedimentos', 'auth' => 'sim'],
+    ['rota' => 'animais', 'texto' => 'Animais', 'auth' => 'sim'],
     // scaffold:crud
 ];
