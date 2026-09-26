@@ -7,32 +7,32 @@
     <?= campo_csrf() ?>
     <div class="row g-3">
     <div class="col-md-6">
-        <label class="form-label" for="nome">nome</label>
+        <label class="form-label" for="nome">Nome</label>
         <input class="form-control <?= tem_erro('nome') ? 'is-invalid' : '' ?>" id="nome" type="text" name="nome" value="<?= e(antigo('nome', $registro['nome'] ?? '')) ?>">
         <?php if ($mensagem = erro_de('nome')): ?><div class="invalid-feedback d-block"><?= e($mensagem) ?></div><?php endif ?>
     </div>
     <div class="col-md-6">
-        <label class="form-label" for="raca">raca</label>
+        <label class="form-label" for="raca">Raça</label>
         <input class="form-control <?= tem_erro('raca') ? 'is-invalid' : '' ?>" id="raca" type="text" name="raca" value="<?= e(antigo('raca', $registro['raca'] ?? '')) ?>">
         <?php if ($mensagem = erro_de('raca')): ?><div class="invalid-feedback d-block"><?= e($mensagem) ?></div><?php endif ?>
     </div>
     <div class="col-md-6">
-        <label class="form-label" for="data_nascimento">data_nascimento</label>
+        <label class="form-label" for="data_nascimento">Data de nascimento</label>
         <input class="form-control <?= tem_erro('data_nascimento') ? 'is-invalid' : '' ?>" id="data_nascimento" type="date" name="data_nascimento" value="<?= e(antigo('data_nascimento', $registro['data_nascimento'] ?? '')) ?>">
         <?php if ($mensagem = erro_de('data_nascimento')): ?><div class="invalid-feedback d-block"><?= e($mensagem) ?></div><?php endif ?>
     </div>
     <div class="col-md-6">
-        <label class="form-label" for="sexo">sexo</label>
+        <label class="form-label" for="sexo">Sexo</label>
         <input class="form-control <?= tem_erro('sexo') ? 'is-invalid' : '' ?>" id="sexo" type="text" name="sexo" value="<?= e(antigo('sexo', $registro['sexo'] ?? '')) ?>">
         <?php if ($mensagem = erro_de('sexo')): ?><div class="invalid-feedback d-block"><?= e($mensagem) ?></div><?php endif ?>
     </div>
     <div class="col-md-6">
-        <label class="form-label" for="peso">peso</label>
+        <label class="form-label" for="peso">Peso</label>
         <input class="form-control <?= tem_erro('peso') ? 'is-invalid' : '' ?>" id="peso" type="number" step="0.01" name="peso" value="<?= e(antigo('peso', $registro['peso'] ?? '')) ?>">
         <?php if ($mensagem = erro_de('peso')): ?><div class="invalid-feedback d-block"><?= e($mensagem) ?></div><?php endif ?>
     </div>
     <div class="col-md-6">
-        <label class="form-label" for="castrado">castrado</label>
+        <label class="form-label" for="castrado">Castrado</label>
         <div class="form-check">
             <input type="hidden" name="castrado" value="0">
             <input class="form-check-input" id="castrado" type="checkbox" name="castrado" value="1" <?= antigo('castrado', $registro['castrado'] ?? '') ? 'checked' : '' ?>>
@@ -41,12 +41,12 @@
         <?php if ($mensagem = erro_de('castrado')): ?><div class="invalid-feedback d-block"><?= e($mensagem) ?></div><?php endif ?>
     </div>
     <div class="col-12">
-        <label class="form-label" for="observacoes">observacoes</label>
+        <label class="form-label" for="observacoes">Observações</label>
         <textarea class="form-control <?= tem_erro('observacoes') ? 'is-invalid' : '' ?>" id="observacoes" name="observacoes" rows="4"><?= e(antigo('observacoes', $registro['observacoes'] ?? '')) ?></textarea>
         <?php if ($mensagem = erro_de('observacoes')): ?><div class="invalid-feedback d-block"><?= e($mensagem) ?></div><?php endif ?>
     </div>
     <div class="col-md-6">
-        <label class="form-label" for="tutor_id">tutor_id</label>
+        <label class="form-label" for="tutor_id">Tutor</label>
         <?php $selecionado = antigo('tutor_id', $registro['tutor_id'] ?? ''); ?>
         <select class="form-select <?= tem_erro('tutor_id') ? 'is-invalid' : '' ?>" id="tutor_id" name="tutor_id">
             <option value="">Selecione...</option>
@@ -57,7 +57,7 @@
         <?php if ($mensagem = erro_de('tutor_id')): ?><div class="invalid-feedback d-block"><?= e($mensagem) ?></div><?php endif ?>
     </div>
     <div class="col-md-6">
-        <label class="form-label" for="especie_id">especie_id</label>
+        <label class="form-label" for="especie_id">Espécie</label>
         <?php $selecionado = antigo('especie_id', $registro['especie_id'] ?? ''); ?>
         <select class="form-select <?= tem_erro('especie_id') ? 'is-invalid' : '' ?>" id="especie_id" name="especie_id">
             <option value="">Selecione...</option>

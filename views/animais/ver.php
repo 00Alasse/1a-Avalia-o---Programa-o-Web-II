@@ -12,25 +12,25 @@
 
 <div class="card border-0 shadow-sm">
     <dl class="row g-0 mb-0 p-4">
-        <dt class="col-sm-3">id</dt>
+        <dt class="col-sm-3">ID</dt>
         <dd class="col-sm-9"><?= e($registro['id']) ?></dd>
-        <dt class="col-sm-3">nome</dt>
+        <dt class="col-sm-3">Nome</dt>
         <dd class="col-sm-9"><?= e($registro['nome'] ?? '') ?></dd>
-        <dt class="col-sm-3">raca</dt>
+        <dt class="col-sm-3">Raça</dt>
         <dd class="col-sm-9"><?= e($registro['raca'] ?? '') ?></dd>
-        <dt class="col-sm-3">data_nascimento</dt>
+        <dt class="col-sm-3">Data de nascimento</dt>
         <dd class="col-sm-9"><?= e($registro['data_nascimento'] ?? '') ?></dd>
-        <dt class="col-sm-3">sexo</dt>
+        <dt class="col-sm-3">Sexo</dt>
         <dd class="col-sm-9"><?= e($registro['sexo'] ?? '') ?></dd>
-        <dt class="col-sm-3">peso</dt>
+        <dt class="col-sm-3">Peso</dt>
         <dd class="col-sm-9"><?= e($registro['peso'] ?? '') ?></dd>
-        <dt class="col-sm-3">castrado</dt>
+        <dt class="col-sm-3">Castrado</dt>
         <dd class="col-sm-9"><?= e(sim_nao($registro['castrado'] ?? null)) ?></dd>
-        <dt class="col-sm-3">observacoes</dt>
+        <dt class="col-sm-3">Observações</dt>
         <dd class="col-sm-9"><?= e($registro['observacoes'] ?? '') ?></dd>
-        <dt class="col-sm-3">tutor_id</dt>
+        <dt class="col-sm-3">Tutor</dt>
         <dd class="col-sm-9"><?= e($registro['tutor_id'] ?? '') ?></dd>
-        <dt class="col-sm-3">especie_id</dt>
+        <dt class="col-sm-3">Espécie</dt>
         <dd class="col-sm-9"><?= e($registro['especie_id'] ?? '') ?></dd>
     </dl>
 </div>

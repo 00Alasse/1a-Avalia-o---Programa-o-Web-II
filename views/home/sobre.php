@@ -1,36 +1,103 @@
-<h1>Como funciona o framework</h1>
+<div class="mb-4">
+    <h1 class="h3 mb-1">Como funciona a 𓃠 Pata Amiga</h1>
+    <p class="text-secondary mb-0">
+        Conheça a estrutura e o funcionamento do sistema.
+    </p>
+</div>
 
-<h2>O caminho de uma requisicao</h2>
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body p-4">
+        <h2 class="h5">Sobre o sistema</h2>
 
-<pre class="codigo">
-Navegador
+        <p style="text-align: justify;">
+            A Pata Amiga é um sistema desenvolvido para auxiliar no
+            gerenciamento de uma clínica veterinária, reunindo em um só lugar
+            informações sobre tutores, animais, veterinários, espécies e
+            procedimentos.
+        </p>
+
+        <p style="text-align: justify;" class="mb-0">
+            O sistema utiliza uma estrutura baseada no padrão MVC
+            (Model-View-Controller), organizando as responsabilidades da
+            aplicação e facilitando sua manutenção e evolução.
+        </p>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body p-4">
+        <h2 class="h5">Como funciona o sistema</h2>
+
+        <pre class="codigo">Navegador
    |
    v
-index.php -> nucleo/bootstrap.php -> Nucleo\App
-                                      |
-                                      v
-                         Controller -> Model -> banco de dados
-                                      |
-                                      v
-                                  View -> HTML
-</pre>
+index.php -> bootstrap.php -> Aplicação
+                              |
+                              v
+                    Controller -> Model -> Banco de dados
+                              |
+                              v
+                           View -> HTML</pre>
+    </div>
+</div>
 
-<h2>Comecar uma aplicacao</h2>
+<div class="row g-4">
+    <div class="col-12 col-md-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body p-4">
+                <h2 class="h5">Controller</h2>
+                <p class="text-secondary mb-0" style="text-align: justify;">
+                    Recebe as requisições do usuário e coordena as ações
+                    necessárias no sistema.
+                </p>
+            </div>
+        </div>
+    </div>
 
-<p>O projeto inicia sem tabelas ou entidades de exemplo. Gere um recurso
-completo pelo terminal:</p>
+    <div class="col-12 col-md-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body p-4">
+                <h2 class="h5">Model</h2>
+                <p class="text-secondary mb-0" style="text-align: justify;">
+                    Responsável pelo acesso e gerenciamento dos dados
+                    utilizados pela aplicação.
+                </p>
+            </div>
+        </div>
+    </div>
 
-<pre class="codigo">php console.php scaffold:crud produtos nome:string preco:decimal</pre>
+    <div class="col-12 col-md-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body p-4">
+                <h2 class="h5">View</h2>
+                <p class="text-secondary mb-0" style="text-align: justify;">
+                    Apresenta as informações e as funcionalidades do sistema
+                    para o usuário por meio das páginas HTML.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
 
-<p>Para adicionar login a um model existente, execute:</p>
+<div class="card border-0 shadow-sm mt-4">
+    <div class="card-body p-4">
+        <h2 class="h5">Principais cadastros</h2>
 
-<pre class="codigo">php console.php auth:install Cliente</pre>
+        <p class="text-secondary mb-3">
+            A Pata Amiga permite o gerenciamento dos principais registros
+            utilizados pela clínica:
+        </p>
 
-<p>O comando adiciona os campos <code>email</code> e <code>senha</code> quando
-necessario e cria as telas em <code>/auth-cliente</code> — o prefixo sai do
-nome do modelo. Sem argumento nenhum, <code>auth:install</code> cria o model
-<code>Usuario</code> e o login unico em <code>/auth</code>. Controllers podem
-exigir login chamando <code>$this-&gt;exigirAutenticacao()</code>. Consulte
-<code>documentacao/Tutorial-Comandos.md</code> para o fluxo completo.</p>
+        <ul class="mb-0">
+            <li>Tutores e seus dados de cadastro;</li>
+            <li>Animais e suas informações;</li>
+            <li>Espécies cadastradas;</li>
+            <li>Veterinários e suas especialidades;</li>
+            <li>Procedimentos e seus valores e durações.</li>
+        </ul>
+    </div>
+</div>
 
-<p><a class="botao botao--secundario" href="<?= url() ?>">Voltar ao inicio</a></p>
+<p class="mt-4">
+    <a class="botao botao--secundario" href="<?= url() ?>">Voltar ao início</a>
+</p>

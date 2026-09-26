@@ -7,7 +7,7 @@
 
 return [
     // Nome que aparece no titulo e no cabecalho das paginas.
-    'nome' => 'Framework MVC - Curso Tecnico',
+    'nome' => 'Pata Amiga',
 
     // Endereco raiz do sistema.
     // Deixe vazio para o framework detectar sozinho.

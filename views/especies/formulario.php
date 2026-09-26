@@ -7,12 +7,12 @@
     <?= campo_csrf() ?>
     <div class="row g-3">
     <div class="col-md-6">
-        <label class="form-label" for="nome">nome</label>
+        <label class="form-label" for="nome">Nome</label>
         <input class="form-control <?= tem_erro('nome') ? 'is-invalid' : '' ?>" id="nome" type="text" name="nome" value="<?= e(antigo('nome', $registro['nome'] ?? '')) ?>">
         <?php if ($mensagem = erro_de('nome')): ?><div class="invalid-feedback d-block"><?= e($mensagem) ?></div><?php endif ?>
     </div>
     <div class="col-12">
-        <label class="form-label" for="observacoes">observacoes</label>
+        <label class="form-label" for="observacoes">Observações</label>
         <textarea class="form-control <?= tem_erro('observacoes') ? 'is-invalid' : '' ?>" id="observacoes" name="observacoes" rows="4"><?= e(antigo('observacoes', $registro['observacoes'] ?? '')) ?></textarea>
         <?php if ($mensagem = erro_de('observacoes')): ?><div class="invalid-feedback d-block"><?= e($mensagem) ?></div><?php endif ?>
     </div>

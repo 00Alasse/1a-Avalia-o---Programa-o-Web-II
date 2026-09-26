@@ -1,10 +1,10 @@
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
     <div>
-        <h1 class="h3 mb-1">especies</h1>
+        <h1 class="h3 mb-1">Espécies</h1>
         <p class="text-secondary mb-0">Gerencie os registros cadastrados.</p>
     </div>
     <div class="d-flex flex-wrap gap-2">
-        <a class="btn btn-outline-secondary" href="<?= url('especies/relatorio') ?>">Relatorio PDF</a>
+        <a class="btn btn-outline-secondary" href="<?= url('especies/relatorio') ?>">Relatório PDF</a>
         <a class="btn btn-primary" href="<?= url('especies/criar') ?>">Novo registro</a>
     </div>
 </div>
@@ -15,9 +15,9 @@
             <thead class="table-light">
             <tr>
                 <th>ID</th>
-                <th>nome</th>
-                <th>observacoes</th>
-                <th class="text-end">Acoes</th>
+                <th>Nome</th>
+                <th>Observações</th>
+                <th class="text-end">Ações</th>
             </tr>
             </thead>
             <tbody>

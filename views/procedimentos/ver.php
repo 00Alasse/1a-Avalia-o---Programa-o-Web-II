@@ -12,13 +12,13 @@
 
 <div class="card border-0 shadow-sm">
     <dl class="row g-0 mb-0 p-4">
-        <dt class="col-sm-3">id</dt>
+        <dt class="col-sm-3">ID</dt>
         <dd class="col-sm-9"><?= e($registro['id']) ?></dd>
-        <dt class="col-sm-3">descricao</dt>
+        <dt class="col-sm-3">Descrição</dt>
         <dd class="col-sm-9"><?= e($registro['descricao'] ?? '') ?></dd>
-        <dt class="col-sm-3">valor</dt>
+        <dt class="col-sm-3">Valor</dt>
         <dd class="col-sm-9"><?= e($registro['valor'] ?? '') ?></dd>
-        <dt class="col-sm-3">duracao_minutos</dt>
+        <dt class="col-sm-3">Duração (minutos)</dt>
         <dd class="col-sm-9"><?= e($registro['duracao_minutos'] ?? '') ?></dd>
     </dl>
 </div>

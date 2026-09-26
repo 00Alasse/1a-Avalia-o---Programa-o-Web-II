@@ -7,27 +7,27 @@
     <?= campo_csrf() ?>
     <div class="row g-3">
     <div class="col-md-6">
-        <label class="form-label" for="nome">nome</label>
+        <label class="form-label" for="nome">Nome</label>
         <input class="form-control <?= tem_erro('nome') ? 'is-invalid' : '' ?>" id="nome" type="text" name="nome" value="<?= e(antigo('nome', $registro['nome'] ?? '')) ?>">
         <?php if ($mensagem = erro_de('nome')): ?><div class="invalid-feedback d-block"><?= e($mensagem) ?></div><?php endif ?>
     </div>
     <div class="col-md-6">
-        <label class="form-label" for="crmv">crmv</label>
+        <label class="form-label" for="crmv">CRMV</label>
         <input class="form-control <?= tem_erro('crmv') ? 'is-invalid' : '' ?>" id="crmv" type="text" name="crmv" value="<?= e(antigo('crmv', $registro['crmv'] ?? '')) ?>">
         <?php if ($mensagem = erro_de('crmv')): ?><div class="invalid-feedback d-block"><?= e($mensagem) ?></div><?php endif ?>
     </div>
     <div class="col-md-6">
-        <label class="form-label" for="especialidade">especialidade</label>
+        <label class="form-label" for="especialidade">Especialidade</label>
         <input class="form-control <?= tem_erro('especialidade') ? 'is-invalid' : '' ?>" id="especialidade" type="text" name="especialidade" value="<?= e(antigo('especialidade', $registro['especialidade'] ?? '')) ?>">
         <?php if ($mensagem = erro_de('especialidade')): ?><div class="invalid-feedback d-block"><?= e($mensagem) ?></div><?php endif ?>
     </div>
     <div class="col-md-6">
-        <label class="form-label" for="telefone">telefone</label>
+        <label class="form-label" for="telefone">Telefone</label>
         <input class="form-control <?= tem_erro('telefone') ? 'is-invalid' : '' ?>" id="telefone" type="text" name="telefone" value="<?= e(antigo('telefone', $registro['telefone'] ?? '')) ?>">
         <?php if ($mensagem = erro_de('telefone')): ?><div class="invalid-feedback d-block"><?= e($mensagem) ?></div><?php endif ?>
     </div>
     <div class="col-md-6">
-        <label class="form-label" for="ativo">ativo</label>
+        <label class="form-label" for="ativo">Ativo</label>
         <div class="form-check">
             <input type="hidden" name="ativo" value="0">
             <input class="form-check-input" id="ativo" type="checkbox" name="ativo" value="1" <?= antigo('ativo', $registro['ativo'] ?? '') ? 'checked' : '' ?>>

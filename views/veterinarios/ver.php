@@ -12,17 +12,17 @@
 
 <div class="card border-0 shadow-sm">
     <dl class="row g-0 mb-0 p-4">
-        <dt class="col-sm-3">id</dt>
+        <dt class="col-sm-3">ID</dt>
         <dd class="col-sm-9"><?= e($registro['id']) ?></dd>
-        <dt class="col-sm-3">nome</dt>
+        <dt class="col-sm-3">Nome</dt>
         <dd class="col-sm-9"><?= e($registro['nome'] ?? '') ?></dd>
-        <dt class="col-sm-3">crmv</dt>
+        <dt class="col-sm-3">CRMV</dt>
         <dd class="col-sm-9"><?= e($registro['crmv'] ?? '') ?></dd>
-        <dt class="col-sm-3">especialidade</dt>
+        <dt class="col-sm-3">Especialidade</dt>
         <dd class="col-sm-9"><?= e($registro['especialidade'] ?? '') ?></dd>
-        <dt class="col-sm-3">telefone</dt>
+        <dt class="col-sm-3">Telefone</dt>
         <dd class="col-sm-9"><?= e($registro['telefone'] ?? '') ?></dd>
-        <dt class="col-sm-3">ativo</dt>
+        <dt class="col-sm-3">Ativo</dt>
         <dd class="col-sm-9"><?= e(sim_nao($registro['ativo'] ?? null)) ?></dd>
     </dl>
 </div>

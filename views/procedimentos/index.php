@@ -1,10 +1,10 @@
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
     <div>
-        <h1 class="h3 mb-1">procedimentos</h1>
+        <h1 class="h3 mb-1">Procedimentos</h1>
         <p class="text-secondary mb-0">Gerencie os registros cadastrados.</p>
     </div>
     <div class="d-flex flex-wrap gap-2">
-        <a class="btn btn-outline-secondary" href="<?= url('procedimentos/relatorio') ?>">Relatorio PDF</a>
+        <a class="btn btn-outline-secondary" href="<?= url('procedimentos/relatorio') ?>">Relatório PDF</a>
         <a class="btn btn-primary" href="<?= url('procedimentos/criar') ?>">Novo registro</a>
     </div>
 </div>
@@ -15,10 +15,10 @@
             <thead class="table-light">
             <tr>
                 <th>ID</th>
-                <th>descricao</th>
-                <th>valor</th>
-                <th>duracao_minutos</th>
-                <th class="text-end">Acoes</th>
+                <th>Descrição</th>
+                <th>Valor</th>
+                <th>Duração (minutos)</th>
+                <th class="text-end">Ações</th>
             </tr>
             </thead>
             <tbody>

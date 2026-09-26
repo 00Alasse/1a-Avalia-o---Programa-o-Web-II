@@ -1,10 +1,10 @@
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
     <div>
-        <h1 class="h3 mb-1">tutores</h1>
+        <h1 class="h3 mb-1">Tutores</h1>
         <p class="text-secondary mb-0">Gerencie os registros cadastrados.</p>
     </div>
     <div class="d-flex flex-wrap gap-2">
-        <a class="btn btn-outline-secondary" href="<?= url('tutores/relatorio') ?>">Relatorio PDF</a>
+        <a class="btn btn-outline-secondary" href="<?= url('tutores/relatorio') ?>">Relatório PDF</a>
         <a class="btn btn-primary" href="<?= url('tutores/criar') ?>">Novo registro</a>
     </div>
 </div>
@@ -15,13 +15,13 @@
             <thead class="table-light">
             <tr>
                 <th>ID</th>
-                <th>nome</th>
-                <th>cpf</th>
-                <th>telefone</th>
-                <th>email</th>
-                <th>endereco</th>
-                <th>data_cliente</th>
-                <th class="text-end">Acoes</th>
+                <th>Nome</th>
+                <th>CPF</th>
+                <th>Telefone</th>
+                <th>E-mail</th>
+                <th>Endereço</th>
+                <th>Data de cadastro</th>
+                <th class="text-end">Ações</th>
             </tr>
             </thead>
             <tbody>

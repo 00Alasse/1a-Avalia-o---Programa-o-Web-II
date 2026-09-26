@@ -16,7 +16,7 @@ $rotaAtual = trim((string) ($_GET['url'] ?? ''), '/');
 $secao     = explode('/', $rotaAtual)[0] ?: '';
 
 $itens = array_values(array_filter(
-    (array) Config::obter('menu', [['rota' => '', 'texto' => 'Inicio']]),
+    (array) Config::obter('menu', [['rota' => '', 'texto' => 'Início']]),
     function (array $item): bool {
         $regra = $item['auth'] ?? null;
 
@@ -43,10 +43,10 @@ $providers  = Autenticacao::providers();
 <header class="cabecalho">
     <aside class="sidebar offcanvas-lg offcanvas-start" id="menuPrincipal" tabindex="-1">
         <a class="sidebar__marca" href="<?= url() ?>">
-            <span class="sidebar__logo">&lt;/&gt;</span>
-            <span><?= e($nomeDoSite ?? 'Framework MVC') ?></span>
+            <span class="sidebar__logo">𓃠</span>
+            <span><?= e($nomeDoSite ?? 'Pata Amiga') ?></span>
         </a>
-        <div class="sidebar__rotulo">Navegacao</div>
+        <div class="sidebar__rotulo">Navegação</div>
         <nav class="sidebar__menu">
             <?php foreach ($itens as $item): ?>
                 <?php $rota = trim((string) ($item['rota'] ?? ''), '/'); ?>

@@ -34,7 +34,7 @@ $nomeDoSite = Config::obter('app.nome', 'Framework MVC');
     <main class="login">
         <div class="login__caixa">
             <a class="login__marca" href="<?= url() ?>">
-                <span class="login__logo">&lt;/&gt;</span>
+                <span class="login__logo">𓃠</span>
                 <span><?= e($nomeDoSite) ?></span>
             </a>
 

@@ -1,10 +1,10 @@
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
     <div>
-        <h1 class="h3 mb-1">animais</h1>
+        <h1 class="h3 mb-1">Animais</h1>
         <p class="text-secondary mb-0">Gerencie os registros cadastrados.</p>
     </div>
     <div class="d-flex flex-wrap gap-2">
-        <a class="btn btn-outline-secondary" href="<?= url('animais/relatorio') ?>">Relatorio PDF</a>
+        <a class="btn btn-outline-secondary" href="<?= url('animais/relatorio') ?>">Relatório PDF</a>
         <a class="btn btn-primary" href="<?= url('animais/criar') ?>">Novo registro</a>
     </div>
 </div>
@@ -13,11 +13,11 @@
 <form class="card border-0 shadow-sm p-3 mb-3" method="get" action="<?= url('animais') ?>">
     <div class="row g-2 align-items-end">
         <div class="col-12 col-sm-6 col-lg-3">
-            <label class="form-label small text-secondary mb-1" for="pesquisa_nome">nome</label>
+            <label class="form-label small text-secondary mb-1" for="pesquisa_nome">Nome</label>
             <input class="form-control" id="pesquisa_nome" type="text" name="nome" value="<?= e($pesquisa['nome'] ?? '') ?>">
         </div>
         <div class="col-12 col-sm-6 col-lg-3">
-            <label class="form-label small text-secondary mb-1" for="pesquisa_especie_id">especie_id</label>
+            <label class="form-label small text-secondary mb-1" for="pesquisa_especie_id">Espécie</label>
             <?php $escolhido = (string) ($pesquisa['especie_id'] ?? ''); ?>
             <select class="form-select" id="pesquisa_especie_id" name="especie_id">
                 <option value="">Todos</option>
@@ -27,7 +27,7 @@
             </select>
         </div>
         <div class="col-12 col-sm-6 col-lg-3">
-            <label class="form-label small text-secondary mb-1" for="pesquisa_tutor_id">tutor_id</label>
+            <label class="form-label small text-secondary mb-1" for="pesquisa_tutor_id">Tutor</label>
             <?php $escolhido = (string) ($pesquisa['tutor_id'] ?? ''); ?>
             <select class="form-select" id="pesquisa_tutor_id" name="tutor_id">
                 <option value="">Todos</option>
@@ -50,16 +50,16 @@
             <thead class="table-light">
             <tr>
                 <th>ID</th>
-                <th>nome</th>
-                <th>raca</th>
-                <th>data_nascimento</th>
-                <th>sexo</th>
-                <th>peso</th>
-                <th>castrado</th>
-                <th>observacoes</th>
-                <th>tutor_id</th>
-                <th>especie_id</th>
-                <th class="text-end">Acoes</th>
+                <th>Nome</th>
+                <th>Raça</th>
+                <th>Data de nascimento</th>
+                <th>Sexo</th>
+                <th>Peso</th>
+                <th>Castrado</th>
+                <th>Observações</th>
+                <th>Tutor</th>
+                <th>Espécie</th>
+                <th class="text-end">Ações</th>
             </tr>
             </thead>
             <tbody>
