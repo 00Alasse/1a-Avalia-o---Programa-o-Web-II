@@ -64,9 +64,11 @@ class Atendimento extends Model
     }
 
     /** Opcoes da tabela pai, usadas no <select> do formulario. */
-    public function veterinarios(): array
+   public function veterinarios(): array
     {
-        return (new \Modelos\Veterinario())->todos();
+    return (new \Modelos\Veterinario())->consultar(
+        'SELECT * FROM veterinarios WHERE ativo = 1 ORDER BY id DESC'
+    );
     }
 
     /** Opcoes da tabela pai, usadas no <select> do formulario. */
