@@ -55,3 +55,17 @@ CREATE TABLE IF NOT EXISTS `animais` (
     CONSTRAINT fk_animais_tutor_id FOREIGN KEY (`tutor_id`) REFERENCES `tutores`(`id`),
     CONSTRAINT fk_animais_especie_id FOREIGN KEY (`especie_id`) REFERENCES `especies`(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `atendimentos` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `animal_id` INT NULL,
+    `veterinario_id` INT NULL,
+    `procedimento_id` INT NULL,
+    `data_hora` DATETIME NULL,
+    `valor_cobrado` DECIMAL(12,2) NULL,
+    `observacoes_clinicas` TEXT NULL,
+    `situacao` VARCHAR(255) NULL,
+    CONSTRAINT fk_atendimentos_animal_id FOREIGN KEY (`animal_id`) REFERENCES `animais`(`id`),
+    CONSTRAINT fk_atendimentos_veterinario_id FOREIGN KEY (`veterinario_id`) REFERENCES `veterinarios`(`id`),
+    CONSTRAINT fk_atendimentos_procedimento_id FOREIGN KEY (`procedimento_id`) REFERENCES `procedimentos`(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
