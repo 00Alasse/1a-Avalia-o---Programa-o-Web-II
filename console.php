@@ -3187,7 +3187,10 @@ function caminhoRelatorioPdf(string $caminho): string
 
     $real = realpath($pasta);
 
-    if ($real === false || !str_starts_with($real . '/', CAMINHO_RAIZ . '/')) {
+    $raizNormalizada = str_replace('\\', '/', rtrim(CAMINHO_RAIZ, '/\\'));
+$realNormalizado = $real === false ? false : str_replace('\\', '/', rtrim($real, '/\\'));
+
+if ($realNormalizado === false || !str_starts_with($realNormalizado . '/', $raizNormalizada . '/')) {
         throw new InvalidArgumentException(
             "O relatorio deve ser gravado dentro do projeto: \"{$caminho}\" sai da pasta raiz."
         );
