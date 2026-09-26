@@ -41,7 +41,7 @@ $conectados = Autenticacao::conectados();
 $providers  = Autenticacao::providers();
 ?>
 <header class="cabecalho">
-    <aside class="sidebar offcanvas-lg offcanvas-start" id="menuPrincipal" tabindex="-1">
+    <aside class="sidebar" id="menuPrincipal">
         <a class="sidebar__marca" href="<?= url() ?>">
             <span class="sidebar__logo">𓃠</span>
             <span><?= e($nomeDoSite ?? 'Pata Amiga') ?></span>
