@@ -16,10 +16,22 @@ class Especie extends Model
      * Devolve um array vazio quando esta tudo certo.
      */
     public function validar(array $dados, int|string|null $ignorarId = null): array
-    {
-        return (new Validador($dados))
-            ->obrigatorio('nome')
-            ->maximo('nome', 255)
-            ->erros();
+{
+    $v = new Validador($dados);
+
+    $v->obrigatorio('nome')
+        ->maximo('nome', 255);
+
+    $nome = $dados['nome'] ?? '';
+
+    if ($nome !== '') {
+        $registro = $this->primeiroOnde('nome', $nome);
+
+        if ($registro !== null && ($ignorarId === null || (string) $registro['id'] !== (string) $ignorarId)) {
+            $v->personalizada('nome', false, 'Esta espécie já está cadastrada.');
+        }
     }
+
+    return $v->erros();
+}
 }
