@@ -31,5 +31,6 @@ return [
     ['rota' => 'especies', 'texto' => 'Especies'],
     ['rota' => 'tutores', 'texto' => 'Tutores'],
     ['rota' => 'veterinarios', 'texto' => 'Veterinarios'],
+    ['rota' => 'procedimentos', 'texto' => 'Procedimentos'],
     // scaffold:crud
 ];

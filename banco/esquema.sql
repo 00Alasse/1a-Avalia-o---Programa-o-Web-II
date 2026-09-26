@@ -33,3 +33,10 @@ CREATE TABLE IF NOT EXISTS `veterinarios` (
     `telefone` VARCHAR(255) NULL,
     `ativo` TINYINT(1) NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `procedimentos` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `descricao` VARCHAR(255) NULL,
+    `valor` DECIMAL(12,2) NULL,
+    `duracao_minutos` INT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
