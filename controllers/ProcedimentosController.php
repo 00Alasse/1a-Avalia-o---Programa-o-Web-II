@@ -172,7 +172,29 @@ class ProcedimentosController extends Controller
         $sql .= ' ORDER BY id DESC';
 
         $registros = $this->modelo->consultar($sql, $parametros);
-        $pdf = RelatorioPdf::conteudo('Relatorio de procedimentos', ['id', 'descricao', 'valor', 'duracao_minutos'], $registros);
+
+        foreach ($registros as &$registro) {
+            if (
+                isset($registro['valor'])
+                && is_numeric($registro['valor'])
+            ) {
+                $registro['valor'] =
+                    'R$ ' . number_format(
+                        (float) $registro['valor'],
+                        2,
+                        ',',
+                        '.'
+                    );
+            }
+        }
+
+        unset($registro);
+
+        $pdf = RelatorioPdf::conteudo(
+            'Relatório de procedimentos',
+            ['id', 'descricao', 'valor', 'duracao_minutos'],
+            $registros
+        );
 
         $this->pdf($pdf, 'procedimentos.pdf');
     }

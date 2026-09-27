@@ -195,7 +195,11 @@ class TutoresController extends Controller
         $sql .= ' ORDER BY id DESC';
 
         $registros = $this->modelo->consultar($sql, $parametros);
-        $pdf = RelatorioPdf::conteudo('Relatorio de tutores', ['id', 'nome', 'cpf', 'telefone', 'email', 'endereco', 'data_cliente'], $registros);
+        $pdf = RelatorioPdf::conteudo(
+            'Relatório de tutores',
+            ['id', 'nome', 'cpf', 'telefone', 'email', 'endereco', 'data_cliente'],
+            $registros
+        );
 
         $this->pdf($pdf, 'tutores.pdf');
     }

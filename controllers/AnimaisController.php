@@ -337,13 +337,70 @@ class AnimaisController extends Controller
         $sql .= ' ORDER BY id DESC';
 
         $registros = $this->modelo->consultar($sql, $parametros);
+
+        // Busca os dados das tabelas relacionadas.
+        $tutores = $this->modelo->tutores();
         $especies = $this->modelo->especies();
+
+        $tutoresPorId = array_column($tutores, null, 'id');
         $especiesPorId = array_column($especies, null, 'id');
-        $pdf = RelatorioPdf::conteudo('Relatorio de animais', ['id', 'nome', 'raca', 'data_nascimento', 'sexo', 'peso', 'castrado', 'observacoes', 'tutor_id', 'especie_id'], $registros);
+
+        // Prepara os dados para o relatório.
+        $linhasRelatorio = [];
+
+        foreach ($registros as $registro) {
+            $linhasRelatorio[] = [
+                'id' => $registro['id'] ?? '',
+                'nome' => $registro['nome'] ?? '',
+                'raca' => $registro['raca'] ?? '',
+                'data_nascimento' => $registro['data_nascimento'] ?? '',
+                'sexo' => $registro['sexo'] ?? '',
+                'peso' => $registro['peso'] ?? '',
+                'castrado' => !empty($registro['castrado']) ? 'Sim' : 'Não',
+                'observacoes' => $registro['observacoes'] ?? '',
+                'tutor' => $tutoresPorId[$registro['tutor_id']]['nome'] ?? '-',
+                'especie' => $especiesPorId[$registro['especie_id']]['nome'] ?? '-',
+            ];
+        }
+
+        $colunas = [
+            'ID',
+            'Nome',
+            'Raça',
+            'Data de nascimento',
+            'Sexo',
+            'Peso',
+            'Castrado',
+            'Observações',
+            'Tutor',
+            'Espécie',
+        ];
+
+        $dados = [];
+
+        foreach ($linhasRelatorio as $linha) {
+            $dados[] = [
+                'ID' => $linha['id'],
+                'Nome' => $linha['nome'],
+                'Raça' => $linha['raca'],
+                'Data de nascimento' => $linha['data_nascimento'],
+                'Sexo' => $linha['sexo'],
+                'Peso' => $linha['peso'],
+                'Castrado' => $linha['castrado'],
+                'Observações' => $linha['observacoes'],
+                'Tutor' => $linha['tutor'],
+                'Espécie' => $linha['especie'],
+            ];
+        }
+
+        $pdf = RelatorioPdf::conteudo(
+            'Relatório de animais',
+            $colunas,
+            $dados
+        );
 
         $this->pdf($pdf, 'animais.pdf');
     }
-
     /**
      * POST /animais/excluir/1
      *

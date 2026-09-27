@@ -153,8 +153,8 @@ class VacinasController extends Controller
     /**
      * GET /vacinas/relatorio
      *
-     * Cada campo da query string vira um filtro:
-     *     /vacinas/relatorio?animal_id=teste
+     * Gera um relatório das vacinas com os nomes do animal
+     * e do veterinário em vez de exibir apenas os IDs.
      */
     public function relatorio(): void
     {
@@ -165,56 +165,86 @@ class VacinasController extends Controller
 
         $filtro = $this->get('id');
         if (is_scalar($filtro) && (string) $filtro !== '') {
-            $condicoes[] = '`id` = ?';
+            $condicoes[] = 'v.`id` = ?';
             $parametros[] = $filtro;
         }
 
         $filtro = $this->get('animal_id');
         if (is_scalar($filtro) && (string) $filtro !== '') {
-            $condicoes[] = '`animal_id` = ?';
+            $condicoes[] = 'v.`animal_id` = ?';
             $parametros[] = $filtro;
         }
 
         $filtro = $this->get('veterinario_id');
         if (is_scalar($filtro) && (string) $filtro !== '') {
-            $condicoes[] = '`veterinario_id` = ?';
+            $condicoes[] = 'v.`veterinario_id` = ?';
             $parametros[] = $filtro;
         }
 
         $filtro = $this->get('nome_vacina');
         if (is_scalar($filtro) && (string) $filtro !== '') {
-            $condicoes[] = '`nome_vacina` LIKE ? ESCAPE ' . Sql::ESCAPE_LIKE;
+            $condicoes[] = 'v.`nome_vacina` LIKE ? ESCAPE ' . Sql::ESCAPE_LIKE;
             $parametros[] = Sql::comoLike((string) $filtro);
         }
 
         $filtro = $this->get('lote');
         if (is_scalar($filtro) && (string) $filtro !== '') {
-            $condicoes[] = '`lote` LIKE ? ESCAPE ' . Sql::ESCAPE_LIKE;
+            $condicoes[] = 'v.`lote` LIKE ? ESCAPE ' . Sql::ESCAPE_LIKE;
             $parametros[] = Sql::comoLike((string) $filtro);
         }
 
         $filtro = $this->get('data_aplicacao');
         if (is_scalar($filtro) && (string) $filtro !== '') {
-            $condicoes[] = '`data_aplicacao` LIKE ? ESCAPE ' . Sql::ESCAPE_LIKE;
+            $condicoes[] = 'v.`data_aplicacao` LIKE ? ESCAPE ' . Sql::ESCAPE_LIKE;
             $parametros[] = Sql::comoLike((string) $filtro);
         }
 
         $filtro = $this->get('data_retorno');
         if (is_scalar($filtro) && (string) $filtro !== '') {
-            $condicoes[] = '`data_retorno` LIKE ? ESCAPE ' . Sql::ESCAPE_LIKE;
+            $condicoes[] = 'v.`data_retorno` LIKE ? ESCAPE ' . Sql::ESCAPE_LIKE;
             $parametros[] = Sql::comoLike((string) $filtro);
         }
 
-        $sql = 'SELECT * FROM ' . $this->modelo->tabelaProtegida();
+        /*
+         * Busca os nomes relacionados através dos IDs.
+         */
+        $sql = '
+        SELECT
+            v.`id`,
+            a.`nome` AS `animal`,
+            ve.`nome` AS `veterinario`,
+            v.`nome_vacina`,
+            v.`lote`,
+            v.`data_aplicacao`,
+            v.`data_retorno`
+        FROM `vacinas` v
+        INNER JOIN `animais` a
+            ON a.`id` = v.`animal_id`
+        INNER JOIN `veterinarios` ve
+            ON ve.`id` = v.`veterinario_id`
+    ';
 
         if ($condicoes !== []) {
             $sql .= ' WHERE ' . implode(' AND ', $condicoes);
         }
 
-        $sql .= ' ORDER BY id DESC';
+        $sql .= ' ORDER BY v.`id` DESC';
 
         $registros = $this->modelo->consultar($sql, $parametros);
-        $pdf = RelatorioPdf::conteudo('Relatorio de vacinas', ['id', 'animal_id', 'veterinario_id', 'nome_vacina', 'lote', 'data_aplicacao', 'data_retorno'], $registros);
+
+        $pdf = RelatorioPdf::conteudo(
+            'Relatório de vacinas',
+            [
+                'id',
+                'animal',
+                'veterinario',
+                'nome_vacina',
+                'lote',
+                'data_aplicacao',
+                'data_retorno'
+            ],
+            $registros
+        );
 
         $this->pdf($pdf, 'vacinas.pdf');
     }

@@ -17,8 +17,9 @@ class Animal extends Model
      */
     public function validar(array $dados, int|string|null $ignorarId = null): array
     {
-        return (new Validador($dados))
-            ->obrigatorio('nome')
+        $v = new Validador($dados);
+
+        $v->obrigatorio('nome')
             ->maximo('nome', 255)
             ->maximo('raca', 255)
             ->maximo('sexo', 255)
@@ -26,10 +27,26 @@ class Animal extends Model
             ->obrigatorio('tutor_id')
             ->numerico('tutor_id')
             ->obrigatorio('especie_id')
-            ->numerico('especie_id')
-            ->erros();
-    }
+            ->numerico('especie_id');
 
+        $dataNascimento = $dados['data_nascimento'] ?? '';
+
+        if ($dataNascimento !== '') {
+            $data = \DateTime::createFromFormat('Y-m-d', $dataNascimento);
+            $hoje = new \DateTime('today');
+
+            if ($data === false || $data > $hoje) {
+                $v->personalizada(
+                    'data_nascimento',
+                    false,
+                    'A data de nascimento não pode ser futura.'
+                );
+            }
+        }
+
+        return $v->erros();
+    }
+    
     /** Opcoes da tabela pai, usadas no <select> do formulario. */
     public function tutores(): array
     {

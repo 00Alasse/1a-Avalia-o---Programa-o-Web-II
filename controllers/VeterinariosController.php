@@ -188,8 +188,20 @@ class VeterinariosController extends Controller
         $sql .= ' ORDER BY id DESC';
 
         $registros = $this->modelo->consultar($sql, $parametros);
-        $pdf = RelatorioPdf::conteudo('Relatorio de veterinarios', ['id', 'nome', 'crmv', 'especialidade', 'telefone', 'ativo'], $registros);
 
+        foreach ($registros as &$registro) {
+            $registro['ativo'] = ((int) ($registro['ativo'] ?? 0) === 1)
+                ? 'Sim'
+                : 'Não';
+        }
+        unset($registro);
+
+        $pdf = RelatorioPdf::conteudo(
+            'Relatório de veterinários',
+            ['id', 'nome', 'crmv', 'especialidade', 'telefone', 'ativo'],
+            $registros
+        );
+        
         $this->pdf($pdf, 'veterinarios.pdf');
     }
 

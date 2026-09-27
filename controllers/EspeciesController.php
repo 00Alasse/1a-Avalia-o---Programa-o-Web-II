@@ -164,7 +164,7 @@ class EspeciesController extends Controller
         $sql .= ' ORDER BY id DESC';
 
         $registros = $this->modelo->consultar($sql, $parametros);
-        $pdf = RelatorioPdf::conteudo('Relatorio de especies', ['id', 'nome', 'observacoes'], $registros);
+        $pdf = RelatorioPdf::conteudo('Relatório de espécies', ['id', 'nome', 'observacoes'], $registros);
 
         $this->pdf($pdf, 'especies.pdf');
     }
