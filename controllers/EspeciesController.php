@@ -176,16 +176,35 @@ class EspeciesController extends Controller
      * nao conseguem apagar registros.
      */
     public function excluir(string $id): void
-    {
-        $this->exigirAutenticacao();
+{
+    $this->exigirAutenticacao();
 
-        $this->exigirFormularioValido();
+    $this->exigirFormularioValido();
 
+    if (!$this->modelo->existe($id)) {
+        $this->naoEncontrado();
+    }
+
+    try {
         if (!$this->modelo->excluir($id)) {
             $this->naoEncontrado();
         }
+    } catch (\PDOException $e) {
+        // A espécie possui animais vinculados.
+        if ($e->getCode() === '23000') {
+            $this->mensagem(
+                'erro',
+                'Não é possível excluir esta espécie porque existem animais cadastrados para ela.'
+            );
+            $this->redirecionar('especies');
+        }
 
-        $this->mensagem('sucesso', 'Especie excluido com sucesso.');
-        $this->redirecionar('especies');
+        // Se for outro erro do banco, deixa o framework
+        // tratar normalmente.
+        throw $e;
     }
+
+    $this->mensagem('sucesso', 'Espécie excluída com sucesso.');
+    $this->redirecionar('especies');
+}
 }

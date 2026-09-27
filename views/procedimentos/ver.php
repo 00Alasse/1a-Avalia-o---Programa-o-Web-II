@@ -17,7 +17,7 @@
         <dt class="col-sm-3">Descrição</dt>
         <dd class="col-sm-9"><?= e($registro['descricao'] ?? '') ?></dd>
         <dt class="col-sm-3">Valor</dt>
-        <dd class="col-sm-9"><?= e($registro['valor'] ?? '') ?></dd>
+        <dd class="col-sm-9"><?= e(moeda_br($registro['valor'] ?? '')) ?></dd>
         <dt class="col-sm-3">Duração (minutos)</dt>
         <dd class="col-sm-9"><?= e($registro['duracao_minutos'] ?? '') ?></dd>
     </dl>

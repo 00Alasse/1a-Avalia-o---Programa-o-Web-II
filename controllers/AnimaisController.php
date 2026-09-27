@@ -29,8 +29,8 @@ class AnimaisController extends Controller
         //
         // Os VALORES vao como "?" (parametros do PDO). So os nomes de
         // coluna entram no texto do SQL, e eles sao fixos aqui.
-        $pesquisa   = [];
-        $condicoes  = [];
+        $pesquisa = [];
+        $condicoes = [];
         $parametros = [];
 
         $termo = $this->get('nome');
@@ -66,12 +66,22 @@ class AnimaisController extends Controller
         $sql .= ' ORDER BY `id` DESC';
         // ----- scaffold:pesquisa fim -----
 
+        $registros = $this->modelo->consultar($sql, $parametros);
+
+        $especies = $this->modelo->especies();
+        $tutores = $this->modelo->tutores();
+
+        $especiesPorId = array_column($especies, null, 'id');
+        $tutoresPorId = array_column($tutores, null, 'id');
+
         $this->view('animais/index', [
-            'titulo'    => 'Animais',
-            'registros' => $this->modelo->consultar($sql, $parametros),
-            'pesquisa'  => $pesquisa,
-            'tutores'   => $this->modelo->tutores(),
-            'especies'  => $this->modelo->especies(),
+            'titulo' => 'Animais',
+            'registros' => $registros,
+            'pesquisa' => $pesquisa,
+            'especies' => $especies,
+            'tutores' => $tutores,
+            'especiesPorId' => $especiesPorId,
+            'tutoresPorId' => $tutoresPorId,
         ]);
     }
 
@@ -81,7 +91,7 @@ class AnimaisController extends Controller
         $this->exigirAutenticacao();
 
         $this->view('animais/formulario', [
-            'titulo'   => 'Novo Animal',
+            'titulo' => 'Novo Animal',
             'registro' => null,
             'tutores' => $this->modelo->tutores(),
             'especies' => $this->modelo->especies(),
@@ -98,7 +108,7 @@ class AnimaisController extends Controller
         $dados = [
             'nome' => $this->post('nome'),
             'raca' => $this->post('raca'),
-            'data_nascimento' => $this->post('data_nascimento'),
+            'data_nascimento' => $this->post('data_nascimento') ?: null,
             'sexo' => $this->post('sexo'),
             'peso' => $this->post('peso'),
             'castrado' => $this->post('castrado'),
@@ -120,7 +130,6 @@ class AnimaisController extends Controller
     }
 
     /** GET /animais/ver/1 */
-       /** GET /animais/ver/1 */
     public function ver(string $id): void
     {
         $this->exigirAutenticacao();
@@ -137,14 +146,30 @@ class AnimaisController extends Controller
 
         // RF07: Idade calculada a partir da data de nascimento
         $idadeTexto = 'Não informada';
-        if (!empty($registro['data_nascimento'])) {
-            $nasc = new \DateTime($registro['data_nascimento']);
-            $hoje = new \DateTime();
-            $diff = $nasc->diff($hoje);
-            if ($diff->y > 0) {
-                $idadeTexto = $diff->y . ' ano(s)' . ($diff->m > 0 ? ' e ' . $diff->m . ' mês(es)' : '');
-            } else {
-                $idadeTexto = $diff->m . ' mês(es) e ' . $diff->d . ' dia(s)';
+
+        $dataNascimento = $registro['data_nascimento'] ?? null;
+
+        if (
+            !empty($dataNascimento)
+            && $dataNascimento !== '0000-00-00'
+            && $dataNascimento !== '0000-00-00 00:00:00'
+        ) {
+            try {
+                $nasc = new \DateTime($dataNascimento);
+                $hoje = new \DateTime();
+
+                if ($nasc <= $hoje) {
+                    $diff = $nasc->diff($hoje);
+
+                    if ($diff->y > 0) {
+                        $idadeTexto = $diff->y . ' ano(s)' .
+                            ($diff->m > 0 ? ' e ' . $diff->m . ' mês(es)' : '');
+                    } else {
+                        $idadeTexto = $diff->m . ' mês(es) e ' . $diff->d . ' dia(s)';
+                    }
+                }
+            } catch (\Exception $e) {
+                $idadeTexto = 'Não informada';
             }
         }
 
@@ -166,13 +191,13 @@ class AnimaisController extends Controller
         $vacinas = (new \Modelos\Vacina())->consultar($sqlVacinas, [$id]);
 
         $this->view('animais/ver', [
-            'titulo'       => 'Detalhes do Animal',
-            'registro'     => $registro,
-            'tutor'        => $tutor,
-            'especie'      => $especie,
-            'idadeTexto'   => $idadeTexto,
+            'titulo' => 'Detalhes do Animal',
+            'registro' => $registro,
+            'tutor' => $tutor,
+            'especie' => $especie,
+            'idadeTexto' => $idadeTexto,
             'atendimentos' => $atendimentos,
-            'vacinas'      => $vacinas,
+            'vacinas' => $vacinas,
         ]);
     }
 
@@ -188,7 +213,7 @@ class AnimaisController extends Controller
         }
 
         $this->view('animais/formulario', [
-            'titulo'   => 'Editar Animal',
+            'titulo' => 'Editar Animal',
             'registro' => $registro,
             'tutores' => $this->modelo->tutores(),
             'especies' => $this->modelo->especies(),
@@ -209,7 +234,7 @@ class AnimaisController extends Controller
         $dados = [
             'nome' => $this->post('nome'),
             'raca' => $this->post('raca'),
-            'data_nascimento' => $this->post('data_nascimento'),
+            'data_nascimento' => $this->post('data_nascimento') ?: null,
             'sexo' => $this->post('sexo'),
             'peso' => $this->post('peso'),
             'castrado' => $this->post('castrado'),
@@ -240,7 +265,7 @@ class AnimaisController extends Controller
     {
         $this->exigirAutenticacao();
 
-        $condicoes  = [];
+        $condicoes = [];
         $parametros = [];
 
         $filtro = $this->get('id');
@@ -312,6 +337,8 @@ class AnimaisController extends Controller
         $sql .= ' ORDER BY id DESC';
 
         $registros = $this->modelo->consultar($sql, $parametros);
+        $especies = $this->modelo->especies();
+        $especiesPorId = array_column($especies, null, 'id');
         $pdf = RelatorioPdf::conteudo('Relatorio de animais', ['id', 'nome', 'raca', 'data_nascimento', 'sexo', 'peso', 'castrado', 'observacoes', 'tutor_id', 'especie_id'], $registros);
 
         $this->pdf($pdf, 'animais.pdf');
@@ -329,11 +356,28 @@ class AnimaisController extends Controller
 
         $this->exigirFormularioValido();
 
-        if (!$this->modelo->excluir($id)) {
+        if (!$this->modelo->existe($id)) {
             $this->naoEncontrado();
         }
 
-        $this->mensagem('sucesso', 'Animal excluido com sucesso.');
+        try {
+            if (!$this->modelo->excluir($id)) {
+                $this->naoEncontrado();
+            }
+        } catch (\PDOException $e) {
+            // O animal possui atendimentos ou vacinas vinculados.
+            if ($e->getCode() === '23000') {
+                $this->mensagem(
+                    'erro',
+                    'Não é possível excluir este animal porque existem atendimentos ou vacinas cadastrados para ele.'
+                );
+                $this->redirecionar('animais');
+            }
+
+            throw $e;
+        }
+
+        $this->mensagem('sucesso', 'Animal excluído com sucesso.');
         $this->redirecionar('animais');
     }
 }

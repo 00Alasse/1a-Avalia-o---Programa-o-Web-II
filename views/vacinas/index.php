@@ -28,8 +28,9 @@
                 <?php foreach ($registros as $registro): ?>
                     <tr>
                         <td><a href="<?= url('vacinas/ver/' . $registro['id']) ?>">#<?= e($registro['id']) ?></a></td>
-                        <td><?= e($registro['animal_id'] ?? '') ?></td>
-                        <td><?= e($registro['veterinario_id'] ?? '') ?></td>
+                        <td><?= e($animaisPorId[$registro['animal_id']]['nome'] ?? 'Animal não encontrado') ?></td>
+                        <td><?= e($veterinariosPorId[$registro['veterinario_id']]['nome'] ?? 'Veterinário não encontrado') ?>
+                        </td>
                         <td><strong><?= e($registro['nome_vacina'] ?? '') ?></strong></td>
                         <td><?= e($registro['lote'] ?? '') ?></td>
                         <td><?= e(data_br($registro['data_aplicacao'] ?? '')) ?></td>

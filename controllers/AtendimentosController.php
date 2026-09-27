@@ -29,8 +29,8 @@ class AtendimentosController extends Controller
         //
         // Os VALORES vao como "?" (parametros do PDO). So os nomes de
         // coluna entram no texto do SQL, e eles sao fixos aqui.
-        $pesquisa   = [];
-        $condicoes  = [];
+        $pesquisa = [];
+        $condicoes = [];
         $parametros = [];
 
         $termo = $this->get('data_hora');
@@ -68,17 +68,28 @@ class AtendimentosController extends Controller
 
         $registros = $this->modelo->consultar($sql, $parametros);
 
+        $animais = $this->modelo->animais();
+        $veterinarios = $this->modelo->veterinarios();
+        $procedimentos = $this->modelo->procedimentos();
+
+        $animaisPorId = array_column($animais, null, 'id');
+        $veterinariosPorId = array_column($veterinarios, null, 'id');
+        $procedimentosPorId = array_column($procedimentos, null, 'id');
+
         // RF13: Totais calculados sobre os resultados filtrados
         $totalAtendimentos = count($registros);
         $somaValores = array_sum(array_column($registros, 'valor_cobrado'));
 
         $this->view('atendimentos/index', [
-            'titulo'            => 'Atendimentos',
-            'registros'         => $registros,
-            'pesquisa'          => $pesquisa,
-            'veterinarios'      => $this->modelo->veterinarios(),
+            'titulo' => 'Atendimentos',
+            'registros' => $registros,
+            'pesquisa' => $pesquisa,
+            'veterinarios' => $veterinarios,
+            'animaisPorId' => $animaisPorId,
+            'veterinariosPorId' => $veterinariosPorId,
+            'procedimentosPorId' => $procedimentosPorId,
             'totalAtendimentos' => $totalAtendimentos,
-            'somaValores'       => $somaValores,
+            'somaValores' => $somaValores,
         ]);
     }
 
@@ -88,7 +99,7 @@ class AtendimentosController extends Controller
         $this->exigirAutenticacao();
 
         $this->view('atendimentos/formulario', [
-            'titulo'   => 'Novo Atendimento',
+            'titulo' => 'Novo Atendimento',
             'registro' => null,
             'animais' => $this->modelo->animais(),
             'veterinarios' => $this->modelo->veterinarios(),
@@ -104,14 +115,14 @@ class AtendimentosController extends Controller
         $this->exigirFormularioValido();
 
         $dados = [
-            'animal_id'            => $this->post('animal_id'),
-            'veterinario_id'       => $this->post('veterinario_id'),
-            'procedimento_id'      => $this->post('procedimento_id'),
-            'data_hora'            => $this->post('data_hora'),
-            'valor_cobrado'        => $this->post('valor_cobrado'),
+            'animal_id' => $this->post('animal_id'),
+            'veterinario_id' => $this->post('veterinario_id'),
+            'procedimento_id' => $this->post('procedimento_id'),
+            'data_hora' => $this->post('data_hora'),
+            'valor_cobrado' => $this->post('valor_cobrado'),
             'observacoes_clinicas' => $this->post('observacoes_clinicas'),
-            'situacao'             => $this->post('situacao'),
-            'usuario_id'           => usuario_id(), // RF18: Gravado da sessao
+            'situacao' => $this->post('situacao'),
+            'usuario_id' => usuario_id(), // RF18: Gravado da sessao
         ];
 
         $erros = $this->modelo->validar($dados);
@@ -126,7 +137,7 @@ class AtendimentosController extends Controller
         $this->redirecionar('atendimentos/ver/' . $id);
     }
 
-        /** GET /atendimentos/ver/1 */
+    /** GET /atendimentos/ver/1 */
     public function ver(string $id): void
     {
         $this->exigirAutenticacao();
@@ -138,11 +149,17 @@ class AtendimentosController extends Controller
         }
 
         $usuario = !empty($registro['usuario_id']) ? (new \Modelos\Usuario())->buscar($registro['usuario_id']) : null;
+        $animal = !empty($registro['animal_id']) ? (new \Modelos\Animal())->buscar($registro['animal_id']) : null;
+        $veterinario = !empty($registro['veterinario_id']) ? (new \Modelos\Veterinario())->buscar($registro['veterinario_id']) : null;
+        $procedimento = !empty($registro['procedimento_id']) ? (new \Modelos\Procedimento())->buscar($registro['procedimento_id']) : null;
 
         $this->view('atendimentos/ver', [
-            'titulo'   => 'Atendimento',
+            'titulo' => 'Atendimento',
             'registro' => $registro,
-            'usuario'  => $usuario,
+            'usuario' => $usuario,
+            'animal' => $animal,
+            'veterinario' => $veterinario,
+            'procedimento' => $procedimento,
         ]);
     }
 
@@ -158,7 +175,7 @@ class AtendimentosController extends Controller
         }
 
         $this->view('atendimentos/formulario', [
-            'titulo'   => 'Editar Atendimento',
+            'titulo' => 'Editar Atendimento',
             'registro' => $registro,
             'animais' => $this->modelo->animais(),
             'veterinarios' => $this->modelo->veterinarios(),
@@ -209,7 +226,7 @@ class AtendimentosController extends Controller
     {
         $this->exigirAutenticacao();
 
-        $condicoes  = [];
+        $condicoes = [];
         $parametros = [];
 
         $filtro = $this->get('id');

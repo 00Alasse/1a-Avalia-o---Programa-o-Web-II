@@ -22,7 +22,7 @@ class TutoresController extends Controller
         $this->exigirAutenticacao();
 
         $this->view('tutores/index', [
-            'titulo'    => 'Tutores',
+            'titulo' => 'Tutores',
             'registros' => $this->modelo->todos(),
         ]);
     }
@@ -33,7 +33,7 @@ class TutoresController extends Controller
         $this->exigirAutenticacao();
 
         $this->view('tutores/formulario', [
-            'titulo'   => 'Novo Tutor',
+            'titulo' => 'Novo Tutor',
             'registro' => null,
         ]);
     }
@@ -51,7 +51,7 @@ class TutoresController extends Controller
             'telefone' => $this->post('telefone'),
             'email' => $this->post('email'),
             'endereco' => $this->post('endereco'),
-            'data_cliente' => $this->post('data_cliente'),
+            'data_cliente' => date('Y-m-d'),
         ];
 
         $erros = $this->modelo->validar($dados);
@@ -78,7 +78,7 @@ class TutoresController extends Controller
         }
 
         $this->view('tutores/ver', [
-            'titulo'   => 'Tutor',
+            'titulo' => 'Tutor',
             'registro' => $registro,
         ]);
     }
@@ -95,7 +95,7 @@ class TutoresController extends Controller
         }
 
         $this->view('tutores/formulario', [
-            'titulo'   => 'Editar Tutor',
+            'titulo' => 'Editar Tutor',
             'registro' => $registro,
         ]);
     }
@@ -117,7 +117,6 @@ class TutoresController extends Controller
             'telefone' => $this->post('telefone'),
             'email' => $this->post('email'),
             'endereco' => $this->post('endereco'),
-            'data_cliente' => $this->post('data_cliente'),
         ];
 
         $erros = $this->modelo->validar($dados, $id);
@@ -142,7 +141,7 @@ class TutoresController extends Controller
     {
         $this->exigirAutenticacao();
 
-        $condicoes  = [];
+        $condicoes = [];
         $parametros = [];
 
         $filtro = $this->get('id');
@@ -213,11 +212,30 @@ class TutoresController extends Controller
 
         $this->exigirFormularioValido();
 
-        if (!$this->modelo->excluir($id)) {
+        if (!$this->modelo->existe($id)) {
             $this->naoEncontrado();
         }
 
-        $this->mensagem('sucesso', 'Tutor excluido com sucesso.');
+        try {
+            if (!$this->modelo->excluir($id)) {
+                $this->naoEncontrado();
+            }
+        } catch (\PDOException $e) {
+            // O tutor possui animais vinculados.
+            if ($e->getCode() === '23000') {
+                $this->mensagem(
+                    'erro',
+                    'Não é possível excluir este tutor porque existem animais cadastrados para ele.'
+                );
+                $this->redirecionar('tutores');
+            }
+
+            // Se for outro erro do banco, deixa o framework
+            // tratar normalmente.
+            throw $e;
+        }
+
+        $this->mensagem('sucesso', 'Tutor excluído com sucesso.');
         $this->redirecionar('tutores');
     }
 }

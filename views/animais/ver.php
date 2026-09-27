@@ -34,7 +34,7 @@
                 <dd class="col-sm-8"><?= e($registro['raca'] ?? 'Não informada') ?></dd>
 
                 <dt class="col-sm-4 text-secondary">Data de Nascimento</dt>
-                <dd class="col-sm-8"><?= e(data_br($registro['data_nascimento'])) ?></dd>
+                <dd class="col-sm-8"><?= !empty($registro['data_nascimento']) ? e(data_br($registro['data_nascimento'])) : '—' ?></dd>
 
                 <!-- RF07: Idade calculada a partir de data_nascimento -->
                 <dt class="col-sm-4 text-primary">Idade Calculada</dt>

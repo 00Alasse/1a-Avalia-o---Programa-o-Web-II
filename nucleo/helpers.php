@@ -170,7 +170,10 @@ if (!function_exists('sim_nao')) {
             return '';
         }
 
-        return filter_var($valor, FILTER_VALIDATE_BOOLEAN) ? 'Sim' : 'Nao';
+        /**
+ * Mostra um campo boolean como texto: 1 -> "Sim", 0/null -> "Não".
+ */
+        return filter_var($valor, FILTER_VALIDATE_BOOLEAN) ? 'Sim' : 'Não';
     }
 }
 

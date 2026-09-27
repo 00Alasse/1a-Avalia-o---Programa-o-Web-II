@@ -26,7 +26,7 @@
             <tr>
                 <td><a href="<?= url('procedimentos/ver/' . $registro['id']) ?>"><?= e($registro['id']) ?></a></td>
                 <td><?= e($registro['descricao'] ?? '') ?></td>
-                <td><?= e($registro['valor'] ?? '') ?></td>
+                <td><?= e(moeda_br($registro['valor'] ?? '')) ?></td>
                 <td><?= e($registro['duracao_minutos'] ?? '') ?></td>
                 <td class="text-end text-nowrap">
                     <a class="btn btn-sm btn-outline-secondary" href="<?= url('procedimentos/editar/' . $registro['id']) ?>">Editar</a>

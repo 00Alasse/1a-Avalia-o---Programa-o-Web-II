@@ -21,9 +21,19 @@ class VacinasController extends Controller
     {
         $this->exigirAutenticacao();
 
+        $registros = $this->modelo->todos();
+
+        $animais = $this->modelo->animais();
+        $veterinarios = $this->modelo->veterinarios();
+
+        $animaisPorId = array_column($animais, null, 'id');
+        $veterinariosPorId = array_column($veterinarios, null, 'id');
+
         $this->view('vacinas/index', [
-            'titulo'    => 'Vacinas',
-            'registros' => $this->modelo->todos(),
+            'titulo' => 'Vacinas',
+            'registros' => $registros,
+            'animaisPorId' => $animaisPorId,
+            'veterinariosPorId' => $veterinariosPorId,
         ]);
     }
 
@@ -33,7 +43,7 @@ class VacinasController extends Controller
         $this->exigirAutenticacao();
 
         $this->view('vacinas/formulario', [
-            'titulo'   => 'Nova Vacina',
+            'titulo' => 'Nova Vacina',
             'registro' => null,
             'animais' => $this->modelo->animais(),
             'veterinarios' => $this->modelo->veterinarios(),
@@ -48,13 +58,13 @@ class VacinasController extends Controller
         $this->exigirFormularioValido();
 
         $dados = [
-            'animal_id'      => $this->post('animal_id'),
+            'animal_id' => $this->post('animal_id'),
             'veterinario_id' => $this->post('veterinario_id'),
-            'nome_vacina'    => $this->post('nome_vacina'),
-            'lote'           => $this->post('lote'),
+            'nome_vacina' => $this->post('nome_vacina'),
+            'lote' => $this->post('lote'),
             'data_aplicacao' => $this->post('data_aplicacao'),
-            'data_retorno'   => $this->post('data_retorno'),
-            'usuario_id'     => usuario_id(), // RF18: Gravado da sessao
+            'data_retorno' => $this->post('data_retorno'),
+            'usuario_id' => usuario_id(), // RF18: Gravado da sessao
         ];
 
         $erros = $this->modelo->validar($dados);
@@ -69,7 +79,7 @@ class VacinasController extends Controller
         $this->redirecionar('vacinas/ver/' . $id);
     }
 
-        /** GET /vacinas/ver/1 */
+    /** GET /vacinas/ver/1 */
     public function ver(string $id): void
     {
         $this->exigirAutenticacao();
@@ -83,9 +93,9 @@ class VacinasController extends Controller
         $usuario = !empty($registro['usuario_id']) ? (new \Modelos\Usuario())->buscar($registro['usuario_id']) : null;
 
         $this->view('vacinas/ver', [
-            'titulo'   => 'Vacina',
+            'titulo' => 'Vacina',
             'registro' => $registro,
-            'usuario'  => $usuario,
+            'usuario' => $usuario,
         ]);
     }
 
@@ -101,7 +111,7 @@ class VacinasController extends Controller
         }
 
         $this->view('vacinas/formulario', [
-            'titulo'   => 'Editar Vacina',
+            'titulo' => 'Editar Vacina',
             'registro' => $registro,
             'animais' => $this->modelo->animais(),
             'veterinarios' => $this->modelo->veterinarios(),
@@ -150,7 +160,7 @@ class VacinasController extends Controller
     {
         $this->exigirAutenticacao();
 
-        $condicoes  = [];
+        $condicoes = [];
         $parametros = [];
 
         $filtro = $this->get('id');

@@ -25,6 +25,6 @@
         <dt class="col-sm-3">EndereÇo</dt>
         <dd class="col-sm-9"><?= e($registro['endereco'] ?? '') ?></dd>
         <dt class="col-sm-3">Data de cadastro</dt>
-        <dd class="col-sm-9"><?= e($registro['data_cliente'] ?? '') ?></dd>
+        <dd class="col-sm-9"><?= !empty($registro['data_cliente']) ? e(data_br($registro['data_cliente'])) : '—' ?></dd>
     </dl>
 </div>

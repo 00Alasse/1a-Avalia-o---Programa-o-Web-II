@@ -33,7 +33,7 @@
                 <td><?= e($registro['telefone'] ?? '') ?></td>
                 <td><?= e($registro['email'] ?? '') ?></td>
                 <td><?= e($registro['endereco'] ?? '') ?></td>
-                <td><?= e($registro['data_cliente'] ?? '') ?></td>
+                <td><?= e(data_br($registro['data_cliente'] ?? '')) ?></td>
                 <td class="text-end text-nowrap">
                     <a class="btn btn-sm btn-outline-secondary" href="<?= url('tutores/editar/' . $registro['id']) ?>">Editar</a>
                     <form class="d-inline" method="post" action="<?= url('tutores/excluir/' . $registro['id']) ?>" onsubmit="return confirm('Excluir este registro?')">

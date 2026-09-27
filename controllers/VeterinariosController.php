@@ -22,7 +22,7 @@ class VeterinariosController extends Controller
         $this->exigirAutenticacao();
 
         $this->view('veterinarios/index', [
-            'titulo'    => 'Veterinarios',
+            'titulo' => 'Veterinarios',
             'registros' => $this->modelo->todos(),
         ]);
     }
@@ -33,7 +33,7 @@ class VeterinariosController extends Controller
         $this->exigirAutenticacao();
 
         $this->view('veterinarios/formulario', [
-            'titulo'   => 'Novo Veterinario',
+            'titulo' => 'Novo Veterinario',
             'registro' => null,
         ]);
     }
@@ -77,7 +77,7 @@ class VeterinariosController extends Controller
         }
 
         $this->view('veterinarios/ver', [
-            'titulo'   => 'Veterinario',
+            'titulo' => 'Veterinario',
             'registro' => $registro,
         ]);
     }
@@ -94,7 +94,7 @@ class VeterinariosController extends Controller
         }
 
         $this->view('veterinarios/formulario', [
-            'titulo'   => 'Editar Veterinario',
+            'titulo' => 'Editar Veterinario',
             'registro' => $registro,
         ]);
     }
@@ -140,7 +140,7 @@ class VeterinariosController extends Controller
     {
         $this->exigirAutenticacao();
 
-        $condicoes  = [];
+        $condicoes = [];
         $parametros = [];
 
         $filtro = $this->get('id');
@@ -205,11 +205,29 @@ class VeterinariosController extends Controller
 
         $this->exigirFormularioValido();
 
-        if (!$this->modelo->excluir($id)) {
+        if (!$this->modelo->existe($id)) {
             $this->naoEncontrado();
         }
 
-        $this->mensagem('sucesso', 'Veterinario excluido com sucesso.');
+        try {
+            if (!$this->modelo->excluir($id)) {
+                $this->naoEncontrado();
+            }
+        } catch (\PDOException $e) {
+            // O veterinário possui atendimentos ou vacinas vinculados.
+            if ($e->getCode() === '23000') {
+                $this->mensagem(
+                    'erro',
+                    'Não é possível excluir este veterinário porque existem atendimentos ou vacinas vinculados a ele.'
+                );
+                $this->redirecionar('veterinarios');
+            }
+
+            // Se for outro erro do banco, deixa o framework tratar normalmente.
+            throw $e;
+        }
+
+        $this->mensagem('sucesso', 'Veterinário excluído com sucesso.');
         $this->redirecionar('veterinarios');
     }
 }

@@ -11,7 +11,7 @@ class Atendimento extends Model
     protected array $preenchiveis = ['animal_id', 'veterinario_id', 'procedimento_id', 'data_hora', 'valor_cobrado', 'observacoes_clinicas', 'situacao', 'usuario_id'];
     protected string $ordemPadrao = 'id DESC';
 
-        /**
+    /**
      * Regras de validacao do formulario.
      * Devolve um array vazio quando esta tudo certo.
      */
@@ -21,20 +21,40 @@ class Atendimento extends Model
 
         // Validacoes basicas dos campos obrigatorios
         $v->obrigatorio('animal_id', 'Animal')
-          ->numerico('animal_id')
-          ->obrigatorio('veterinario_id', 'Veterinário')
-          ->numerico('veterinario_id')
-          ->obrigatorio('procedimento_id', 'Procedimento')
-          ->numerico('procedimento_id')
-          ->obrigatorio('data_hora', 'Data e Horário')
-          ->numerico('valor_cobrado', 'Valor Cobrado')
-          ->obrigatorio('situacao', 'Situação');
+            ->numerico('animal_id')
+            ->obrigatorio('veterinario_id', 'Veterinário')
+            ->numerico('veterinario_id')
+            ->obrigatorio('procedimento_id', 'Procedimento')
+            ->numerico('procedimento_id')
+            ->obrigatorio('data_hora', 'Data e Horário')
+            ->numerico('valor_cobrado', 'Valor Cobrado')
+            ->obrigatorio('situacao', 'Situação');
 
-        // RF11: Recusar agendamento no passado (exceto se ja foi 'realizado')
+        $v->personalizada(
+            'situacao',
+            in_array($dados['situacao'] ?? '', ['agendado', 'realizado', 'cancelado'], true),
+            'A situação deve ser Agendado, Realizado ou Cancelado.'
+        );
+
+        // RF11: Validar data de acordo com a situação
         if (!empty($dados['data_hora'])) {
             $situacao = $dados['situacao'] ?? '';
-            if ($situacao !== 'realizado' && strtotime($dados['data_hora']) < time()) {
-                $v->personalizada('data_hora', false, 'Agendamentos não podem ter data e horário no passado.');
+            $dataHora = strtotime($dados['data_hora']);
+
+            if ($situacao === 'realizado' && $dataHora > time()) {
+                $v->personalizada(
+                    'data_hora',
+                    false,
+                    'Um atendimento realizado não pode ter data e horário no futuro.'
+                );
+            }
+
+            if ($situacao !== 'realizado' && $dataHora < time()) {
+                $v->personalizada(
+                    'data_hora',
+                    false,
+                    'Atendimentos agendados ou cancelados não podem ter data e horário no passado.'
+                );
             }
         }
 
@@ -55,25 +75,51 @@ class Atendimento extends Model
             }
         }
 
+        // RF12: Impedir castração de animal que já está castrado
+        if (!empty($dados['animal_id']) && !empty($dados['procedimento_id'])) {
+            $animal = (new \Modelos\Animal())->buscar($dados['animal_id']);
+            $procedimento = (new \Modelos\Procedimento())->buscar($dados['procedimento_id']);
+
+            if ($animal !== null && $procedimento !== null) {
+                $descricaoProcedimento = mb_strtolower(trim($procedimento['descricao']));
+
+                if (
+                    $descricaoProcedimento === 'castração'
+                    && isset($animal['castrado'])
+                    && (string) $animal['castrado'] === '1'
+                ) {
+                    $v->personalizada(
+                        'procedimento_id',
+                        false,
+                        'Este animal já está cadastrado como castrado e não pode receber um procedimento de castração.'
+                    );
+                }
+            }
+        }
+
         return $v->erros();
     }
     /** Opcoes da tabela pai, usadas no <select> do formulario. */
     public function animais(): array
     {
-        return (new \Modelos\Animal())->todos();
+        return (new \Modelos\Animal())->consultar(
+            'SELECT * FROM animais ORDER BY nome ASC'
+        );
     }
 
     /** Opcoes da tabela pai, usadas no <select> do formulario. */
-   public function veterinarios(): array
+    public function veterinarios(): array
     {
-    return (new \Modelos\Veterinario())->consultar(
-        'SELECT * FROM veterinarios WHERE ativo = 1 ORDER BY id DESC'
-    );
+        return (new \Modelos\Veterinario())->consultar(
+            'SELECT * FROM veterinarios WHERE ativo = 1 ORDER BY nome ASC'
+        );
     }
 
     /** Opcoes da tabela pai, usadas no <select> do formulario. */
     public function procedimentos(): array
     {
-        return (new \Modelos\Procedimento())->todos();
+        return (new \Modelos\Procedimento())->consultar(
+            'SELECT * FROM procedimentos ORDER BY descricao ASC'
+        );
     }
 }

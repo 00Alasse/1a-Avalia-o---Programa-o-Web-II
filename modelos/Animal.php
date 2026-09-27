@@ -33,12 +33,17 @@ class Animal extends Model
     /** Opcoes da tabela pai, usadas no <select> do formulario. */
     public function tutores(): array
     {
-        return (new \Modelos\Tutor())->todos();
+        return (new \Modelos\Tutor())->consultar(
+            'SELECT * FROM tutores ORDER BY nome ASC'
+        );
     }
+
 
     /** Opcoes da tabela pai, usadas no <select> do formulario. */
     public function especies(): array
     {
-        return (new \Modelos\Especie())->todos();
+        return (new \Modelos\Especie())->consultar(
+            'SELECT * FROM especies ORDER BY nome ASC'
+        );
     }
 }

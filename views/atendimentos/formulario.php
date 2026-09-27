@@ -55,9 +55,15 @@
         <?php if ($mensagem = erro_de('observacoes_clinicas')): ?><div class="invalid-feedback d-block"><?= e($mensagem) ?></div><?php endif ?>
     </div>
     <div class="col-md-6">
-        <label class="form-label" for="situacao">Situação</label>
-        <input class="form-control <?= tem_erro('situacao') ? 'is-invalid' : '' ?>" id="situacao" type="text" name="situacao" value="<?= e(antigo('situacao', $registro['situacao'] ?? '')) ?>">
-        <?php if ($mensagem = erro_de('situacao')): ?><div class="invalid-feedback d-block"><?= e($mensagem) ?></div><?php endif ?>
+       <label class="form-label" for="situacao">Situação</label>
+<select class="form-select <?= tem_erro('situacao') ? 'is-invalid' : '' ?>" id="situacao" name="situacao">
+    <?php $situacaoAtual = antigo('situacao', $registro['situacao'] ?? ''); ?>
+    <option value="">Selecione...</option>
+    <option value="agendado" <?= $situacaoAtual === 'agendado' ? 'selected' : '' ?>>Agendado</option>
+    <option value="realizado" <?= $situacaoAtual === 'realizado' ? 'selected' : '' ?>>Realizado</option>
+    <option value="cancelado" <?= $situacaoAtual === 'cancelado' ? 'selected' : '' ?>>Cancelado</option>
+</select>
+<?php if ($mensagem = erro_de('situacao')): ?><div class="invalid-feedback d-block"><?= e($mensagem) ?></div><?php endif ?>
     </div>
     </div>
     <div class="d-flex gap-2 mt-4">

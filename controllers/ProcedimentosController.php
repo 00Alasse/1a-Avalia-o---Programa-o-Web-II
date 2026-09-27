@@ -22,7 +22,7 @@ class ProcedimentosController extends Controller
         $this->exigirAutenticacao();
 
         $this->view('procedimentos/index', [
-            'titulo'    => 'Procedimentos',
+            'titulo' => 'Procedimentos',
             'registros' => $this->modelo->todos(),
         ]);
     }
@@ -33,7 +33,7 @@ class ProcedimentosController extends Controller
         $this->exigirAutenticacao();
 
         $this->view('procedimentos/formulario', [
-            'titulo'   => 'Novo Procedimento',
+            'titulo' => 'Novo Procedimento',
             'registro' => null,
         ]);
     }
@@ -75,7 +75,7 @@ class ProcedimentosController extends Controller
         }
 
         $this->view('procedimentos/ver', [
-            'titulo'   => 'Procedimento',
+            'titulo' => 'Procedimento',
             'registro' => $registro,
         ]);
     }
@@ -92,7 +92,7 @@ class ProcedimentosController extends Controller
         }
 
         $this->view('procedimentos/formulario', [
-            'titulo'   => 'Editar Procedimento',
+            'titulo' => 'Editar Procedimento',
             'registro' => $registro,
         ]);
     }
@@ -136,7 +136,7 @@ class ProcedimentosController extends Controller
     {
         $this->exigirAutenticacao();
 
-        $condicoes  = [];
+        $condicoes = [];
         $parametros = [];
 
         $filtro = $this->get('id');
@@ -183,17 +183,42 @@ class ProcedimentosController extends Controller
      * So aceita POST com token: um link ou um <img> em outro site
      * nao conseguem apagar registros.
      */
+    /**
+     * POST /procedimentos/excluir/1
+     *
+     * So aceita POST com token: um link ou um <img> em outro site
+     * nao conseguem apagar registros.
+     */
     public function excluir(string $id): void
     {
         $this->exigirAutenticacao();
 
         $this->exigirFormularioValido();
 
-        if (!$this->modelo->excluir($id)) {
+        if (!$this->modelo->existe($id)) {
             $this->naoEncontrado();
         }
 
-        $this->mensagem('sucesso', 'Procedimento excluido com sucesso.');
+        try {
+            if (!$this->modelo->excluir($id)) {
+                $this->naoEncontrado();
+            }
+        } catch (\PDOException $e) {
+            // O procedimento possui atendimentos vinculados.
+            if ($e->getCode() === '23000') {
+                $this->mensagem(
+                    'erro',
+                    'Não é possível excluir este procedimento porque existem atendimentos cadastrados para ele.'
+                );
+                $this->redirecionar('procedimentos');
+            }
+
+            // Se for outro erro do banco, deixa o framework
+            // tratar normalmente.
+            throw $e;
+        }
+
+        $this->mensagem('sucesso', 'Procedimento excluído com sucesso.');
         $this->redirecionar('procedimentos');
     }
 }
