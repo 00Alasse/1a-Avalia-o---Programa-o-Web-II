@@ -19,10 +19,11 @@ class AtendimentosControllerTest extends TesteBase
 
         // Cada teste monta as proprias tabelas: a ordem em que as
         // classes rodam nao interfere no resultado.
-        $this->recriarTabelas([
+                $this->recriarTabelas([
             'animais' => 'CREATE TABLE `animais` (`id` INT AUTO_INCREMENT PRIMARY KEY, `nome` VARCHAR(255) NULL)',
-            'veterinarios' => 'CREATE TABLE `veterinarios` (`id` INT AUTO_INCREMENT PRIMARY KEY, `nome` VARCHAR(255) NULL)',
+            'veterinarios' => 'CREATE TABLE `veterinarios` (`id` INT AUTO_INCREMENT PRIMARY KEY, `nome` VARCHAR(255) NULL, `ativo` TINYINT(1) NULL DEFAULT 1)',
             'procedimentos' => 'CREATE TABLE `procedimentos` (`id` INT AUTO_INCREMENT PRIMARY KEY, `nome` VARCHAR(255) NULL)',
+            'usuarios' => 'CREATE TABLE `usuarios` (`id` INT AUTO_INCREMENT PRIMARY KEY, `nome` VARCHAR(255) NULL, `email` VARCHAR(255) NULL)',
             'atendimentos' => "CREATE TABLE `atendimentos` (
                 `id` INT AUTO_INCREMENT PRIMARY KEY,
                 `animal_id` INT NULL,
@@ -32,6 +33,7 @@ class AtendimentosControllerTest extends TesteBase
                 `valor_cobrado` DECIMAL(12,2) NULL,
                 `observacoes_clinicas` TEXT NULL,
                 `situacao` VARCHAR(255) NULL,
+                `usuario_id` INT NULL,
                 CONSTRAINT fk_atendimentos_animal_id FOREIGN KEY (`animal_id`) REFERENCES `animais`(`id`),
                 CONSTRAINT fk_atendimentos_veterinario_id FOREIGN KEY (`veterinario_id`) REFERENCES `veterinarios`(`id`),
                 CONSTRAINT fk_atendimentos_procedimento_id FOREIGN KEY (`procedimento_id`) REFERENCES `procedimentos`(`id`)
@@ -41,8 +43,7 @@ class AtendimentosControllerTest extends TesteBase
         Database::conexao()->exec("INSERT INTO `animais` (`nome`) VALUES ('Opcao 1'), ('Opcao 2')");
         $this->idsRelacoes['animal_id'] = (int) Database::conexao()->query('SELECT id FROM `animais` ORDER BY id ASC LIMIT 1')->fetchColumn();
         $this->idsRelacoesAtualizadas['animal_id'] = (int) Database::conexao()->query('SELECT id FROM `animais` ORDER BY id DESC LIMIT 1')->fetchColumn();
-        Database::conexao()->exec("INSERT INTO `veterinarios` (`nome`) VALUES ('Opcao 1'), ('Opcao 2')");
-        $this->idsRelacoes['veterinario_id'] = (int) Database::conexao()->query('SELECT id FROM `veterinarios` ORDER BY id ASC LIMIT 1')->fetchColumn();
+        Database::conexao()->exec("INSERT INTO `veterinarios` (`nome`, `ativo`) VALUES ('Opcao 1', 1), ('Opcao 2', 1)");            $this->idsRelacoes['veterinario_id'] = (int) Database::conexao()->query('SELECT id FROM `veterinarios` ORDER BY id ASC LIMIT 1')->fetchColumn();
         $this->idsRelacoesAtualizadas['veterinario_id'] = (int) Database::conexao()->query('SELECT id FROM `veterinarios` ORDER BY id DESC LIMIT 1')->fetchColumn();
         Database::conexao()->exec("INSERT INTO `procedimentos` (`nome`) VALUES ('Opcao 1'), ('Opcao 2')");
         $this->idsRelacoes['procedimento_id'] = (int) Database::conexao()->query('SELECT id FROM `procedimentos` ORDER BY id ASC LIMIT 1')->fetchColumn();
@@ -56,7 +57,7 @@ class AtendimentosControllerTest extends TesteBase
     {
         $lista = $this->requisitar('atendimentos');
         $this->assertIgual(200, $lista->status);
-        $this->assertContem('animal_id', $lista->html);
+        $this->assertContem('Animal', $lista->html);        
         $this->assertContem('atendimentos/relatorio', $lista->html);
 
         $formulario = $this->requisitar('atendimentos/criar');
@@ -67,7 +68,7 @@ class AtendimentosControllerTest extends TesteBase
             'animal_id' => $this->idsRelacoes['animal_id'],
             'veterinario_id' => $this->idsRelacoes['veterinario_id'],
             'procedimento_id' => $this->idsRelacoes['procedimento_id'],
-            'data_hora' => '2026-01-01 10:00:00',
+            'data_hora' => '2026-12-01 10:00:00',
             'valor_cobrado' => 10.5,
             'observacoes_clinicas' => 'Teste',
             'situacao' => 'Teste',
@@ -92,7 +93,7 @@ class AtendimentosControllerTest extends TesteBase
             'animal_id' => $this->idsRelacoesAtualizadas['animal_id'],
             'veterinario_id' => $this->idsRelacoesAtualizadas['veterinario_id'],
             'procedimento_id' => $this->idsRelacoesAtualizadas['procedimento_id'],
-            'data_hora' => '2026-02-02 12:00:00',
+            'data_hora' => '2026-12-02 12:00:00',
             'valor_cobrado' => 20.5,
             'observacoes_clinicas' => 'Atualizado',
             'situacao' => 'Atualizado',
