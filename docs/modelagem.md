@@ -1,45 +1,90 @@
-# Modelagem de Dados — Clínica
+Set-Content -Path "docs/modelagem.md" -Value '# Modelagem de Dados — Clínica Veterinária Pata Amiga
 
-## Entidades
+## Entidades e Atributos
 
-### pacientes
-| Campo | Tipo | Restrição |
-|---|---|---|
-| id | INT | PK, AUTO_INCREMENT |
-| nome | VARCHAR(255) | NOT NULL |
-| cpf | VARCHAR(14) | NOT NULL, UNIQUE |
-| data_nascimento | DATE | NOT NULL |
-| telefone | VARCHAR(20) | NULL |
-| email | VARCHAR(255) | NULL |
-| criado_em | DATETIME | DEFAULT NOW() |
+### usuarios
+Controle de acesso da equipe clínica (RF16).
+- id: INT (PK, AUTO_INCREMENT)
+- nome: VARCHAR(100) NOT NULL
+- email: VARCHAR(150) NOT NULL UNIQUE
+- senha: VARCHAR(255) NOT NULL
+- criado_em: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 
-### medicos
-| Campo | Tipo | Restrição |
-|---|---|---|
-| id | INT | PK, AUTO_INCREMENT |
-| nome | VARCHAR(255) | NOT NULL |
-| crm | VARCHAR(20) | NOT NULL, UNIQUE |
-| especialidade | VARCHAR(100) | NOT NULL |
-| criado_em | DATETIME | DEFAULT NOW() |
+### especies
+Espécies atendidas (RF01).
+- id: INT (PK, AUTO_INCREMENT)
+- nome: VARCHAR(255) NOT NULL UNIQUE
+- observacoes: TEXT NULL
 
-### consultas
-| Campo | Tipo | Restrição |
-|---|---|---|
-| id | INT | PK, AUTO_INCREMENT |
-| paciente_id | INT | FK → pacientes.id |
-| medico_id | INT | FK → medicos.id |
-| data_hora | DATETIME | NOT NULL |
-| motivo | TEXT | NULL |
-| status | VARCHAR(20) | DEFAULT 'agendada' |
-| criado_em | DATETIME | DEFAULT NOW() |
+### tutores
+Proprietários dos animais (RF02).
+- id: INT (PK, AUTO_INCREMENT)
+- nome: VARCHAR(255) NULL
+- cpf: VARCHAR(255) NOT NULL UNIQUE
+- telefone: VARCHAR(255) NULL
+- email: VARCHAR(255) NOT NULL UNIQUE
+- endereco: VARCHAR(255) NULL
+- data_cliente: DATE NULL
 
-## Relações
-- pacientes 1:N consultas
-- medicos 1:N consultas
-- consulta resolve o N:N entre pacientes e medicos
+### veterinarios
+Corpo clínico da clínica (RF03).
+- id: INT (PK, AUTO_INCREMENT)
+- nome: VARCHAR(255) NULL
+- crmv: VARCHAR(255) NULL
+- especialidade: VARCHAR(255) NULL
+- telefone: VARCHAR(255) NULL
+- ativo: TINYINT(1) DEFAULT 1
 
-## Decisões de design
-- CPF e CRM com UNIQUE para evitar duplicatas
-- status textual (agendada/realizada/cancelada) em vez de boolean
-  porque podem surgir mais estados no futuro
-- Cancelar muda o status, não apaga o registro (preserva histórico) 
+### procedimentos
+Procedimentos clínicos oferecidos (RF04).
+- id: INT (PK, AUTO_INCREMENT)
+- descricao: VARCHAR(255) NULL
+- valor: DECIMAL(12,2) NULL
+- duracao_minutos: INT NULL
+
+### animais
+Pacientes da clínica (RF05, RF06).
+- id: INT (PK, AUTO_INCREMENT)
+- nome: VARCHAR(255) NULL
+- raca: VARCHAR(255) NULL
+- data_nascimento: DATE NULL
+- sexo: VARCHAR(255) NULL
+- peso: DECIMAL(12,2) NULL
+- castrado: TINYINT(1) NULL
+- observacoes: TEXT NULL
+- tutor_id: INT (FK tutores)
+- especie_id: INT (FK especies)
+
+### atendimentos
+Consultas e atendimentos (RF09, RF10, RF11, RF18).
+- id: INT (PK, AUTO_INCREMENT)
+- animal_id: INT (FK animais)
+- veterinario_id: INT (FK veterinarios)
+- procedimento_id: INT (FK procedimentos)
+- data_hora: DATETIME NULL
+- valor_cobrado: DECIMAL(12,2) NULL
+- observacoes_clinicas: TEXT NULL
+- situacao: VARCHAR(255) NULL
+- usuario_id: INT (FK usuarios, autoria)
+
+### vacinas
+Vacinas aplicadas e retornos (RF14, RF15, RF18).
+- id: INT (PK, AUTO_INCREMENT)
+- animal_id: INT (FK animais)
+- veterinario_id: INT (FK veterinarios)
+- nome_vacina: VARCHAR(255) NULL
+- lote: VARCHAR(255) NULL
+- data_aplicacao: DATE NULL
+- data_retorno: DATE NULL
+- usuario_id: INT (FK usuarios, autoria)
+
+## Relacionamentos
+- tutores 1:N animais
+- especies 1:N animais
+- animais 1:N atendimentos
+- veterinarios 1:N atendimentos
+- procedimentos 1:N atendimentos
+- animais 1:N vacinas
+- veterinarios 1:N vacinas
+- usuarios 1:N atendimentos (autoria)
+- usuarios 1:N vacinas (autoria)' -Encoding utf8

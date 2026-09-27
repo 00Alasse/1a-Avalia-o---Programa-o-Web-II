@@ -1,56 +1,22 @@
-# Sistema de Clínica
+# Clínica Veterinária Pata Amiga 🐾
 
-Sistema web para gerenciamento de consultas médicas, desenvolvido com o framework MVC didático em PHP.
+Sistema web completo para gerenciamento de atendimentos, vacinas e prontuários da Clínica Veterinária Pata Amiga, desenvolvido com o Framework Didático MVC em PHP.
 
 ## O que o sistema faz
 
-- Cadastro e listagem de pacientes
-- Cadastro e listagem de médicos
-- Agendamento de consultas vinculando paciente e médico
-- Controle de status da consulta (agendada / realizada / cancelada)
-- Login com controle de acesso por perfil
+- **Cadastros de Apoio**: Gerenciamento de espécies com controle de duplicidade (RF01), tutores com validação de CPF e e-mail únicos (RF02), veterinários com indicação de ativos/inativos (RF03) e catálogo de procedimentos clínicos com valores e duração (RF04).
+- **Animais & Prontuário**: Registro de animais com vínculo obrigatório a tutor e espécie (RF05/RF06), pesquisa combinada (RF08) e prontuário completo exibindo dados do tutor, idade calculada em PHP e histórico de atendimentos e vacinas (RF07).
+- **Atendimentos Clínicos**: Agendamento de consultas e procedimentos com validação contra conflito de horário do mesmo profissional (RF10), recusa de agendamento retroativo no passado (RF11), filtro com contagem e soma dinâmica de valores (RF13) e registro seguro de autoria pela sessão (RF18).
+- **Controle de Vacinas**: Registro de aplicações e previsões de retorno (RF14) com painel na tela inicial destacando vacinas vencidas e a vencer nos próximos 30 dias com links para o animal (RF15).
+- **Controle de Acesso**: Tela de login restrita à equipe clínica com proteção de rotas (RF16/RF17) e apresentação institucional pública da clínica para visitantes (RF25).
 
 ## Como instalar
 
 ### Pré-requisitos
 - PHP 8.1 ou superior
-- MySQL/MariaDB (XAMPP recomendado)
+- MySQL / MariaDB (XAMPP recomendado)
 
 ### Passos
-1. Clone o repositório: git clone https://github.com/00Alasse/1a-Avalia-o---Programa-o-Web-II
-2. Inicie o MySQL no XAMPP
-3. Configure configuracoes/banco.php com seu usuário e senha
-4. Execute: php instalar.php
-5. Execute: php console.php auth:install
-6. Execute o scaffold de cada entidade (ver seção de comandos)
-7. Inicie o servidor: php -S localhost:8000 roteador.php
-8. Acesse: http://localhost:8000
-
-## Comandos usados
-
-php instalar.php
-php console.php auth:install
-php console.php scaffold:crud pacientes nome:string cpf:string data_nascimento:date telefone:string email:string --auth
-php console.php scaffold:crud medicos nome:string crm:string especialidade:string --auth
-php console.php scaffold:crud consultas data_hora:datetime motivo:text status:string paciente_id:belongs_to=pacientes medico_id:belongs_to=medicos --auth
-php console.php db:semear pacientes 10
-php console.php db:semear medicos 5
-
-## Modelo de dados
-
-Veja docs/modelagem.md para o diagrama completo.
-
-- pacientes: id, nome, cpf, data_nascimento, telefone, email
-- medicos: id, nome, crm, especialidade
-- consultas: id, paciente_id (FK), medico_id (FK), data_hora, motivo, status
-
-## Usuários de teste
-
-| Usuário | Senha | Perfil |
-|---|---|---|
-| admin@clinica.br | 123456 | administrador |
-| teste@clinica.br | 123456 | usuario |
-
-## Autores
-
-[Seu nome] e [Nome da Pessoa 1] — [Turma] — [Ano]
+1. Clone o repositório:
+   ```bash
+   git clone https://github.com/00Alasse/1a-Avalia-o---Programa-o-Web-II.git
