@@ -111,7 +111,14 @@ class Atendimento extends Model
     public function veterinarios(): array
     {
         return (new \Modelos\Veterinario())->consultar(
-            'SELECT * FROM veterinarios WHERE ativo = 1 ORDER BY nome ASC'
+            'SELECT * FROM veterinarios ORDER BY nome ASC'
+        );
+    }
+
+    public function todosVeterinarios(): array
+    {
+        return (new \Modelos\Veterinario())->consultar(
+            'SELECT * FROM veterinarios ORDER BY nome ASC'
         );
     }
 

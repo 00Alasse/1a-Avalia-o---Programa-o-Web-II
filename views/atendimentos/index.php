@@ -4,7 +4,13 @@
         <p class="text-secondary mb-0">Gerencie as consultas e procedimentos da clínica.</p>
     </div>
     <div class="d-flex flex-wrap gap-2">
-        <a class="btn btn-outline-secondary" href="<?= url('atendimentos/relatorio') ?>">Relatório PDF</a>
+        <a class="btn btn-outline-secondary" href="<?= url('atendimentos/relatorio') ?>">
+            Relatório PDF
+        </a>
+
+        <a class="btn btn-outline-primary" href="<?= url('atendimentos/relatorio-agenda') ?>">
+            Relatório de Agenda
+        </a>
         <a class="btn btn-primary" href="<?= url('atendimentos/criar') ?>">Novo Atendimento</a>
     </div>
 </div>
@@ -24,7 +30,8 @@
                 <option value="">Todos</option>
                 <?php foreach (($veterinarios ?? []) as $opcao): ?>
                     <option value="<?= e($opcao['id']) ?>" <?= $escolhido === (string) $opcao['id'] ? 'selected' : '' ?>>
-                        <?= e($opcao['nome'] ?? $opcao['descricao'] ?? ('#' . $opcao['id'])) ?></option>
+                        <?= e($opcao['nome'] ?? $opcao['descricao'] ?? ('#' . $opcao['id'])) ?>
+                    </option>
                 <?php endforeach ?>
             </select>
         </div>
@@ -77,8 +84,10 @@
                     <tr>
                         <td><a href="<?= url('atendimentos/ver/' . $registro['id']) ?>">#<?= e($registro['id']) ?></a></td>
                         <td><?= e($animaisPorId[$registro['animal_id']]['nome'] ?? 'Animal não encontrado') ?></td>
-                        <td><?= e($veterinariosPorId[$registro['veterinario_id']]['nome'] ?? 'Veterinário não encontrado') ?></td>
-                        <td><?= e($procedimentosPorId[$registro['procedimento_id']]['descricao'] ?? 'Procedimento não encontrado') ?></td>
+                        <td><?= e($veterinariosPorId[$registro['veterinario_id']]['nome'] ?? 'Veterinário não encontrado') ?>
+                        </td>
+                        <td><?= e($procedimentosPorId[$registro['procedimento_id']]['descricao'] ?? 'Procedimento não encontrado') ?>
+                        </td>
                         <td><?= e(data_br($registro['data_hora'] ?? '', true)) ?></td>
                         <td>R$ <?= e(moeda_br($registro['valor_cobrado'] ?? 0)) ?></td>
                         <td>
