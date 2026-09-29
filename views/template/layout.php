@@ -17,6 +17,7 @@ $nomeDoSite = Config::obter('app.nome', 'Framework MVC');
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,17 +25,19 @@ $nomeDoSite = Config::obter('app.nome', 'Framework MVC');
 
     <link rel="icon" type="image/jpeg" href="<?= asset('imagens/favicon.jpg') ?>">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="<?= asset('css/estilo.css') ?>">
 </head>
+
 <body>
 
     <?= parcial('template/cabecalho', ['nomeDoSite' => $nomeDoSite]) ?>
 
     <main class="app-main">
         <div class="container-fluid conteudo">
-        <?= parcial('template/mensagens') ?>
+            <?= parcial('template/mensagens') ?>
 
-        <?= $conteudo ?>
+            <?= $conteudo ?>
         </div>
     </main>
 
@@ -43,4 +46,5 @@ $nomeDoSite = Config::obter('app.nome', 'Framework MVC');
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="<?= asset('javascripts/app.js') ?>"></script>
 </body>
+
 </html>

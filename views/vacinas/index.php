@@ -4,6 +4,9 @@
         <p class="text-secondary mb-0">Gerencie o histórico de vacinas e retornos dos animais.</p>
     </div>
     <div class="d-flex flex-wrap gap-2">
+        <a class="btn btn-outline-info" href="<?= url('vacinas/carteira') ?>">
+            Carteira de vacinação
+        </a>
         <a class="btn btn-outline-secondary" href="<?= url('vacinas/relatorio') ?>">Relatório PDF</a>
         <a class="btn btn-primary" href="<?= url('vacinas/criar') ?>">Nova Vacina</a>
     </div>

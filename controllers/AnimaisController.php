@@ -141,8 +141,13 @@ class AnimaisController extends Controller
         }
 
         // RF07: Dados do tutor e da especie
-        $tutor = !empty($registro['tutor_id']) ? (new \Modelos\Tutor())->buscar($registro['tutor_id']) : null;
-        $especie = !empty($registro['especie_id']) ? (new \Modelos\Especie())->buscar($registro['especie_id']) : null;
+        $tutor = !empty($registro['tutor_id'])
+            ? (new \Modelos\Tutor())->buscar($registro['tutor_id'])
+            : null;
+
+        $especie = !empty($registro['especie_id'])
+            ? (new \Modelos\Especie())->buscar($registro['especie_id'])
+            : null;
 
         // RF07: Idade calculada a partir da data de nascimento
         $idadeTexto = 'Não informada';
@@ -180,7 +185,11 @@ class AnimaisController extends Controller
                             LEFT JOIN procedimentos p ON p.id = a.procedimento_id 
                             WHERE a.animal_id = ? 
                             ORDER BY a.data_hora DESC";
-        $atendimentos = (new \Modelos\Atendimento())->consultar($sqlAtendimentos, [$id]);
+
+        $atendimentos = (new \Modelos\Atendimento())->consultar(
+            $sqlAtendimentos,
+            [$id]
+        );
 
         // RF07: Historico de vacinas deste animal
         $sqlVacinas = "SELECT vac.*, v.nome AS veterinario_nome 
@@ -188,7 +197,11 @@ class AnimaisController extends Controller
                        LEFT JOIN veterinarios v ON v.id = vac.veterinario_id 
                        WHERE vac.animal_id = ? 
                        ORDER BY vac.data_aplicacao DESC";
-        $vacinas = (new \Modelos\Vacina())->consultar($sqlVacinas, [$id]);
+
+        $vacinas = (new \Modelos\Vacina())->consultar(
+            $sqlVacinas,
+            [$id]
+        );
 
         $this->view('animais/ver', [
             'titulo' => 'Detalhes do Animal',
@@ -256,6 +269,71 @@ class AnimaisController extends Controller
     }
 
     /**
+     * GET /animais/carteira-vacinacao/1
+     *
+     * Gera a carteira de vacinação de um animal,
+     * contendo os dados do animal, do tutor e todas
+     * as vacinas aplicadas.
+     */
+    public function carteiraVacinacao(string $id): void
+    {
+        $this->exigirAutenticacao();
+
+        $animal = $this->modelo->buscar($id);
+
+        if ($animal === null) {
+            $this->naoEncontrado();
+        }
+
+        // Busca o tutor do animal.
+        $tutor = !empty($animal['tutor_id'])
+            ? (new \Modelos\Tutor())->buscar($animal['tutor_id'])
+            : null;
+
+        // Busca todas as vacinas aplicadas neste animal.
+        $sqlVacinas = "
+            SELECT
+                vac.nome_vacina,
+                vac.lote,
+                vac.data_aplicacao,
+                vac.data_retorno,
+                v.nome AS veterinario
+            FROM vacinas vac
+            LEFT JOIN veterinarios v
+                ON v.id = vac.veterinario_id
+            WHERE vac.animal_id = ?
+            ORDER BY vac.data_aplicacao ASC
+        ";
+
+        $vacinas = (new \Modelos\Vacina())->consultar(
+            $sqlVacinas,
+            [$id]
+        );
+
+        /*
+         * A carteira usa uma única tabela:
+         *
+         * Campo | Informação | Vacina | Lote | Aplicação | Retorno | Veterinário
+         *
+         * As primeiras linhas apresentam os dados do animal/tutor.
+         * As linhas seguintes apresentam as vacinas.
+         */
+        $pdf = RelatorioPdf::carteiraVacinacao(
+            'Carteira de vacinação - ' . ($animal['nome'] ?? 'Animal'),
+            $animal,
+            $tutor,
+            null,
+            $vacinas
+        );
+
+        $this->pdf(
+            $pdf,
+            'carteira-vacinacao-' . $id . '.pdf'
+        );
+
+    }
+
+    /**
      * GET /animais/relatorio
      *
      * Cada campo da query string vira um filtro:
@@ -269,60 +347,70 @@ class AnimaisController extends Controller
         $parametros = [];
 
         $filtro = $this->get('id');
+
         if (is_scalar($filtro) && (string) $filtro !== '') {
             $condicoes[] = '`id` = ?';
             $parametros[] = $filtro;
         }
 
         $filtro = $this->get('nome');
+
         if (is_scalar($filtro) && (string) $filtro !== '') {
             $condicoes[] = '`nome` LIKE ? ESCAPE ' . Sql::ESCAPE_LIKE;
             $parametros[] = Sql::comoLike((string) $filtro);
         }
 
         $filtro = $this->get('raca');
+
         if (is_scalar($filtro) && (string) $filtro !== '') {
             $condicoes[] = '`raca` LIKE ? ESCAPE ' . Sql::ESCAPE_LIKE;
             $parametros[] = Sql::comoLike((string) $filtro);
         }
 
         $filtro = $this->get('data_nascimento');
+
         if (is_scalar($filtro) && (string) $filtro !== '') {
             $condicoes[] = '`data_nascimento` LIKE ? ESCAPE ' . Sql::ESCAPE_LIKE;
             $parametros[] = Sql::comoLike((string) $filtro);
         }
 
         $filtro = $this->get('sexo');
+
         if (is_scalar($filtro) && (string) $filtro !== '') {
             $condicoes[] = '`sexo` LIKE ? ESCAPE ' . Sql::ESCAPE_LIKE;
             $parametros[] = Sql::comoLike((string) $filtro);
         }
 
         $filtro = $this->get('peso');
+
         if (is_scalar($filtro) && (string) $filtro !== '') {
             $condicoes[] = '`peso` = ?';
             $parametros[] = $filtro;
         }
 
         $filtro = $this->get('castrado');
+
         if (is_scalar($filtro) && (string) $filtro !== '') {
             $condicoes[] = '`castrado` = ?';
             $parametros[] = $filtro;
         }
 
         $filtro = $this->get('observacoes');
+
         if (is_scalar($filtro) && (string) $filtro !== '') {
             $condicoes[] = '`observacoes` LIKE ? ESCAPE ' . Sql::ESCAPE_LIKE;
             $parametros[] = Sql::comoLike((string) $filtro);
         }
 
         $filtro = $this->get('tutor_id');
+
         if (is_scalar($filtro) && (string) $filtro !== '') {
             $condicoes[] = '`tutor_id` = ?';
             $parametros[] = $filtro;
         }
 
         $filtro = $this->get('especie_id');
+
         if (is_scalar($filtro) && (string) $filtro !== '') {
             $condicoes[] = '`especie_id` = ?';
             $parametros[] = $filtro;
@@ -401,6 +489,7 @@ class AnimaisController extends Controller
 
         $this->pdf($pdf, 'animais.pdf');
     }
+
     /**
      * POST /animais/excluir/1
      *

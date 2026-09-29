@@ -6,7 +6,13 @@
     <div class="d-flex flex-wrap gap-2">
         <a class="btn btn-outline-secondary" href="<?= url('animais') ?>">Voltar</a>
         <a class="btn btn-primary" href="<?= url('animais/editar/' . $registro['id']) ?>">Editar</a>
-        <form method="post" action="<?= url('animais/excluir/' . $registro['id']) ?>" onsubmit="return confirm('Excluir este animal?')">
+
+        <a class="btn btn-outline-info" href="<?= url('animais/carteira-vacinacao/' . $registro['id']) ?>">
+            Carteira de vacinação
+        </a>
+
+        <form method="post" action="<?= url('animais/excluir/' . $registro['id']) ?>"
+            onsubmit="return confirm('Excluir este animal?')">
             <?= campo_csrf() ?>
             <button class="btn btn-outline-danger" type="submit">Excluir</button>
         </form>
@@ -34,7 +40,8 @@
                 <dd class="col-sm-8"><?= e($registro['raca'] ?? 'Não informada') ?></dd>
 
                 <dt class="col-sm-4 text-secondary">Data de Nascimento</dt>
-                <dd class="col-sm-8"><?= !empty($registro['data_nascimento']) ? e(data_br($registro['data_nascimento'])) : '—' ?></dd>
+                <dd class="col-sm-8">
+                    <?= !empty($registro['data_nascimento']) ? e(data_br($registro['data_nascimento'])) : '—' ?></dd>
 
                 <!-- RF07: Idade calculada a partir de data_nascimento -->
                 <dt class="col-sm-4 text-primary">Idade Calculada</dt>
@@ -107,17 +114,20 @@
             </thead>
             <tbody>
                 <?php foreach ($atendimentos as $at): ?>
-                <tr>
-                    <td><?= e(data_br($at['data_hora'], true)) ?></td>
-                    <td><?= e($at['procedimento_nome'] ?? ('#' . $at['procedimento_id'])) ?></td>
-                    <td><?= e($at['veterinario_nome'] ?? ('#' . $at['veterinario_id'])) ?></td>
-                    <td>R$ <?= e(moeda_br($at['valor_cobrado'])) ?></td>
-                    <td><span class="badge bg-secondary"><?= e($at['situacao']) ?></span></td>
-                    <td class="small text-secondary"><?= e($at['observacoes_clinicas']) ?></td>
-                </tr>
+                    <tr>
+                        <td><?= e(data_br($at['data_hora'], true)) ?></td>
+                        <td><?= e($at['procedimento_nome'] ?? ('#' . $at['procedimento_id'])) ?></td>
+                        <td><?= e($at['veterinario_nome'] ?? ('#' . $at['veterinario_id'])) ?></td>
+                        <td>R$ <?= e(moeda_br($at['valor_cobrado'])) ?></td>
+                        <td><span class="badge bg-secondary"><?= e($at['situacao']) ?></span></td>
+                        <td class="small text-secondary"><?= e($at['observacoes_clinicas']) ?></td>
+                    </tr>
                 <?php endforeach ?>
                 <?php if ($atendimentos === []): ?>
-                <tr><td colspan="6" class="text-center text-secondary py-3">Nenhum atendimento realizado para este animal.</td></tr>
+                    <tr>
+                        <td colspan="6" class="text-center text-secondary py-3">Nenhum atendimento realizado para este
+                            animal.</td>
+                    </tr>
                 <?php endif ?>
             </tbody>
         </table>
@@ -143,22 +153,25 @@
             </thead>
             <tbody>
                 <?php foreach ($vacinas as $vac): ?>
-                <tr>
-                    <td class="fw-bold"><?= e($vac['nome_vacina']) ?></td>
-                    <td><?= e($vac['lote']) ?></td>
-                    <td><?= e(data_br($vac['data_aplicacao'])) ?></td>
-                    <td>
-                        <?php if (!empty($vac['data_retorno'])): ?>
-                            <span class="badge bg-warning text-dark"><?= e(data_br($vac['data_retorno'])) ?></span>
-                        <?php else: ?>
-                            <span class="text-secondary">-</span>
-                        <?php endif ?>
-                    </td>
-                    <td><?= e($vac['veterinario_nome'] ?? ('#' . $vac['veterinario_id'])) ?></td>
-                </tr>
+                    <tr>
+                        <td class="fw-bold"><?= e($vac['nome_vacina']) ?></td>
+                        <td><?= e($vac['lote']) ?></td>
+                        <td><?= e(data_br($vac['data_aplicacao'])) ?></td>
+                        <td>
+                            <?php if (!empty($vac['data_retorno'])): ?>
+                                <span class="badge bg-warning text-dark"><?= e(data_br($vac['data_retorno'])) ?></span>
+                            <?php else: ?>
+                                <span class="text-secondary">-</span>
+                            <?php endif ?>
+                        </td>
+                        <td><?= e($vac['veterinario_nome'] ?? ('#' . $vac['veterinario_id'])) ?></td>
+                    </tr>
                 <?php endforeach ?>
                 <?php if ($vacinas === []): ?>
-                <tr><td colspan="5" class="text-center text-secondary py-3">Nenhuma vacina registrada para este animal.</td></tr>
+                    <tr>
+                        <td colspan="5" class="text-center text-secondary py-3">Nenhuma vacina registrada para este animal.
+                        </td>
+                    </tr>
                 <?php endif ?>
             </tbody>
         </table>

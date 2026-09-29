@@ -249,6 +249,28 @@ class VacinasController extends Controller
         $this->pdf($pdf, 'vacinas.pdf');
     }
 
+    public function carteira(): void
+    {
+        $this->exigirAutenticacao();
+
+        $animalId = $this->get('animal_id');
+
+        if (is_scalar($animalId) && (string) $animalId !== '') {
+            $this->redirecionar(
+                'animais/carteira-vacinacao/' . $animalId
+            );
+        }
+
+        $animais = (new \Modelos\Animal())->consultar(
+            'SELECT id, nome FROM animais ORDER BY nome ASC'
+        );
+
+        $this->view('vacinas/carteira', [
+            'titulo' => 'Carteira de vacinação',
+            'animais' => $animais,
+        ]);
+    }
+
     /**
      * POST /vacinas/excluir/1
      *

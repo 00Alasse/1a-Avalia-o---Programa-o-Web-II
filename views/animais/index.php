@@ -24,7 +24,8 @@
                 <option value="">Todos</option>
                 <?php foreach (($especies ?? []) as $opcao): ?>
                     <option value="<?= e($opcao['id']) ?>" <?= $escolhido === (string) $opcao['id'] ? 'selected' : '' ?>>
-                        <?= e($opcao['nome'] ?? $opcao['descricao'] ?? ('#' . $opcao['id'])) ?></option>
+                        <?= e($opcao['nome'] ?? $opcao['descricao'] ?? ('#' . $opcao['id'])) ?>
+                    </option>
                 <?php endforeach ?>
             </select>
         </div>
@@ -35,7 +36,8 @@
                 <option value="">Todos</option>
                 <?php foreach (($tutores ?? []) as $opcao): ?>
                     <option value="<?= e($opcao['id']) ?>" <?= $escolhido === (string) $opcao['id'] ? 'selected' : '' ?>>
-                        <?= e($opcao['nome'] ?? $opcao['descricao'] ?? ('#' . $opcao['id'])) ?></option>
+                        <?= e($opcao['nome'] ?? $opcao['descricao'] ?? ('#' . $opcao['id'])) ?>
+                    </option>
                 <?php endforeach ?>
             </select>
         </div>
@@ -76,12 +78,28 @@
                         <td><?= e($registro['sexo'] ?? '') ?></td>
                         <td><?= e($registro['peso'] ?? '') ?></td>
                         <td><?= e(sim_nao($registro['castrado'] ?? null)) ?></td>
-                        <td><?= e($registro['observacoes'] ?? '') ?></td>
+                        <td>
+                            <?php $observacao = trim($registro['observacoes'] ?? ''); ?>
+
+                            <?php if ($observacao !== ''): ?>
+                                <div class="celula-observacoes" title="<?= e($observacao) ?>">
+                                    <?= e($observacao) ?>
+                                </div>
+                            <?php else: ?>
+                                —
+                            <?php endif; ?>
+                        </td>
                         <td><?= e($tutoresPorId[$registro['tutor_id']]['nome'] ?? 'Tutor não encontrado') ?></td>
                         <td><?= e($especiesPorId[$registro['especie_id']]['nome'] ?? 'Espécie não encontrada') ?></td>
                         <td class="text-end text-nowrap">
                             <a class="btn btn-sm btn-outline-secondary"
                                 href="<?= url('animais/editar/' . $registro['id']) ?>">Editar</a>
+
+                            <a class="btn btn-sm btn-outline-info"
+                                href="<?= url('animais/carteira-vacinacao/' . $registro['id']) ?>">
+                                Carteira
+                            </a>
+
                             <form class="d-inline" method="post" action="<?= url('animais/excluir/' . $registro['id']) ?>"
                                 onsubmit="return confirm('Excluir este registro?')">
                                 <?= campo_csrf() ?>

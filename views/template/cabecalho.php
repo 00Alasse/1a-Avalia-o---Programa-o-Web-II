@@ -13,7 +13,7 @@ use Nucleo\Config;
 
 // Descobre a rota atual para destacar o item do menu.
 $rotaAtual = trim((string) ($_GET['url'] ?? ''), '/');
-$secao     = explode('/', $rotaAtual)[0] ?: '';
+$secao = explode('/', $rotaAtual)[0] ?: '';
 
 $itens = array_values(array_filter(
     (array) Config::obter('menu', [['rota' => '', 'texto' => 'Início']]),
@@ -38,47 +38,105 @@ $itens = array_values(array_filter(
 ));
 
 $conectados = Autenticacao::conectados();
-$providers  = Autenticacao::providers();
+$providers = Autenticacao::providers();
 ?>
+
+<?php
+$iconesMenu = [
+    '' => 'bi-house',
+    'especies' => 'bi-grid-3x3-gap',
+    'tutores' => 'bi-person',
+    'veterinarios' => 'bi-heart-pulse',
+    'procedimentos' => 'bi-clipboard2-pulse',
+    'animais' => 'bi-heart',
+    'atendimentos' => 'bi-clipboard2',
+    'vacinas' => 'bi-eyedropper',
+];
+?>
+
 <header class="cabecalho">
+
     <aside class="sidebar" id="menuPrincipal">
+
         <a class="sidebar__marca" href="<?= url() ?>">
             <span class="sidebar__logo">𓃠</span>
-            <span><?= e($nomeDoSite ?? 'Pata Amiga') ?></span>
+
+            <span class="sidebar__texto-marca">
+                <?= e($nomeDoSite ?? 'Pata Amiga') ?>
+            </span>
         </a>
-        <div class="sidebar__rotulo">Navegação</div>
+
+        <div class="sidebar__rotulo">
+            Navegação
+        </div>
+
         <nav class="sidebar__menu">
+
             <?php foreach ($itens as $item): ?>
                 <?php $rota = trim((string) ($item['rota'] ?? ''), '/'); ?>
-                <a class="sidebar__item <?= $secao === $rota ? 'sidebar__item--ativo' : '' ?>" href="<?= url($rota) ?>">
-                    <span class="sidebar__icone"><?= $rota === '' ? '&#8962;' : '&#9632;' ?></span>
-                    <?= e((string) ($item['texto'] ?? $rota)) ?>
+
+                <a class="sidebar__item <?= $secao === $rota ? 'sidebar__item--ativo' : '' ?>" href="<?= url($rota) ?>"
+                    title="<?= e((string) ($item['texto'] ?? $rota)) ?>">
+                    <span class="sidebar__icone">
+                        <i class="bi <?= e($iconesMenu[$rota] ?? 'bi-circle') ?>"></i>
+                    </span>
+
+                    <span class="sidebar__texto">
+                        <?= e((string) ($item['texto'] ?? $rota)) ?>
+                    </span>
                 </a>
             <?php endforeach ?>
 
             <?php if ($providers !== []): ?>
-                <div class="sidebar__rotulo">Conta</div>
+                <div class="sidebar__rotulo sidebar__rotulo-conta">
+                    Conta
+                </div>
             <?php endif ?>
 
             <?php foreach ($conectados as $provider): ?>
-                <a class="sidebar__item" href="<?= url(Autenticacao::rotaSair($provider)) ?>">
+                <a class="sidebar__item" href="<?= url(Autenticacao::rotaSair($provider)) ?>" title="Sair">
                     <span class="sidebar__icone">&#8594;</span>
-                    Sair<?= $provider === '' ? '' : ' (' . e($provider) . ')' ?>
+
+                    <span class="sidebar__texto">
+                        Sair<?= $provider === '' ? '' : ' (' . e($provider) . ')' ?>
+                    </span>
                 </a>
             <?php endforeach ?>
 
             <?php foreach ($providers as $provider): ?>
-                <?php if (in_array($provider, $conectados, true)) { continue; } ?>
-                <a class="sidebar__item" href="<?= url(Autenticacao::rotaLogin($provider)) ?>">
+                <?php if (in_array($provider, $conectados, true)) {
+                    continue;
+                } ?>
+
+                <a class="sidebar__item" href="<?= url(Autenticacao::rotaLogin($provider)) ?>" title="Entrar">
                     <span class="sidebar__icone">&#8594;</span>
-                    Entrar<?= $provider === '' ? '' : ' (' . e($provider) . ')' ?>
+
+                    <span class="sidebar__texto">
+                        Entrar<?= $provider === '' ? '' : ' (' . e($provider) . ')' ?>
+                    </span>
                 </a>
             <?php endforeach ?>
+
         </nav>
     </aside>
+
     <div class="topbar">
-        <button class="btn btn-outline-primary d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuPrincipal" aria-controls="menuPrincipal">Menu</button>
-        <div class="topbar__titulo"><?= e($titulo ?? 'Painel') ?></div>
-        <div class="topbar__status"><span class="status-ponto"></span> Sistema online</div>
+
+        <!-- BOTÃO NOVO: recolher/abrir menu -->
+        <button class="btn btn-outline-primary botao-menu" type="button" id="botaoMenu"
+            aria-label="Recolher ou abrir menu" title="Recolher ou abrir menu">
+            ☰
+        </button>
+
+        <div class="topbar__titulo">
+            <?= e($titulo ?? 'Painel') ?>
+        </div>
+
+        <div class="topbar__status">
+            <span class="status-ponto"></span>
+            Sistema online
+        </div>
+
     </div>
+
 </header>

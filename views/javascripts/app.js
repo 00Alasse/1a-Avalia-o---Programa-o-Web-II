@@ -53,11 +53,35 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     /* -----------------------------------------------------------------
-       4. Coloca o cursor no primeiro campo do formulario
-       ----------------------------------------------------------------- */
+   4. Coloca o cursor no primeiro campo do formulario
+   ----------------------------------------------------------------- */
     var primeiroCampo = document.querySelector('.formulario input, .formulario select');
 
     if (primeiroCampo) {
         primeiroCampo.focus();
+    }
+
+    /* -----------------------------------------------------------------
+       5. Menu lateral retratil
+       ----------------------------------------------------------------- */
+    var botaoMenu = document.getElementById('botaoMenu');
+
+    if (botaoMenu) {
+        var menuRecolhido = localStorage.getItem('menuRecolhido');
+
+        if (menuRecolhido === 'sim') {
+            document.body.classList.add('menu-recolhido');
+        }
+
+        botaoMenu.addEventListener('click', function () {
+            document.body.classList.toggle('menu-recolhido');
+
+            var recolhido = document.body.classList.contains('menu-recolhido');
+
+            localStorage.setItem(
+                'menuRecolhido',
+                recolhido ? 'sim' : 'nao'
+            );
+        });
     }
 });
