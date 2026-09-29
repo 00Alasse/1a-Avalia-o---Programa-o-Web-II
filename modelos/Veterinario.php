@@ -9,7 +9,7 @@ class Veterinario extends Model
 {
     protected string $tabela = 'veterinarios';
     protected array $preenchiveis = ['nome', 'crmv', 'especialidade', 'telefone', 'ativo'];
-    protected string $ordemPadrao = 'id DESC';
+    protected string $ordemPadrao = 'nome ASC';
 
     /**
      * Regras de validacao do formulario.
