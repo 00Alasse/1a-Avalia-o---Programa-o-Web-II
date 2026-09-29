@@ -398,8 +398,8 @@ code {
 
 .celula-observacoes {
     display: block;
-    width: 180px;
-    max-width: 180px;
+    width: 160px;
+    max-width: 160px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -407,67 +407,70 @@ code {
 
 /* ---------- Ajustes da tabela de Animais ---------- */
 
-/*
- * Ordem das colunas:
- * 1 ID
- * 2 Nome
- * 3 Raça
- * 4 Data de nascimento
- * 5 Sexo
- * 6 Peso
- * 7 Cadastrado
- * 8 Observações
- * 9 Tutor
- * 10 Ações
- */
-
-/* Dá espaço suficiente para a tabela sem esmagar as colunas */
-.table {
-    min-width: 1100px;
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
 }
 
 /* Observações */
 .table th:nth-child(8),
 .table td:nth-child(8) {
-    width: 230px;
-    min-width: 230px;
-    max-width: 230px;
+    width: 160px;
+    min-width: 160px;
+    max-width: 160px;
 }
 
-/* Tutor */
-.table th:nth-child(9),
-.table td:nth-child(9) {
-    width: 170px;
-    min-width: 170px;
-    max-width: 170px;
-}
-
-/* Mantém textos longos organizados */
-.table th:nth-child(8),
-.table td:nth-child(8),
-.table th:nth-child(9),
-.table td:nth-child(9) {
+.table td:nth-child(8) {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
+/* Tutor */
+.table th:nth-child(9),
+.table td:nth-child(9) {
+    width: 135px;
+    min-width: 135px;
+    max-width: 135px;
+}
+
 /* Ações */
 .table th:last-child,
 .table td:last-child {
-    position: sticky;
-    right: 0;
-    width: 235px;
-    min-width: 235px;
-    background: #fff;
-    z-index: 2;
-    box-shadow: -4px 0 8px rgba(0, 0, 0, .06);
+    width: 1%;
+    min-width: 205px;
+    white-space: nowrap;
 }
 
-/* Cabeçalho da coluna Ações */
-.table thead th:last-child {
-    background: #f8f9fa;
-    z-index: 3;
+/* Não deixa os três botões quebrarem ou serem cortados */
+.table td:last-child .btn,
+.table td:last-child form {
+    white-space: nowrap;
+}
+
+/* Espaçamento pequeno entre as ações */
+.table td:last-child .btn {
+    margin-left: .15rem;
+}
+
+/* Quando o menu está recolhido, a tabela ganha mais espaço */
+body.menu-recolhido .table th,
+body.menu-recolhido .table td {
+    padding-left: .65rem;
+    padding-right: .65rem;
+}
+
+/* Ações continuam inteiras */
+body.menu-recolhido .table th:last-child,
+body.menu-recolhido .table td:last-child {
+    min-width: 205px;
+    width: 205px;
+}
+
+body.menu-recolhido .tabela td:last-child,
+body.menu-recolhido .tabela th:last-child {
+    min-width: 185px;
+    width: 185px;
 }
 
 /* ---------- Mensagens (flash) ---------- */
@@ -954,4 +957,24 @@ code {
     .topbar__status {
         display: none;
     }
+}
+
+/* ================================================================
+   Sidebar recolhida: aproveitar praticamente toda a largura
+   ================================================================ */
+
+body.menu-recolhido .app-main {
+    margin-left: 78px;
+    width: calc(100% - 78px);
+}
+
+body.menu-recolhido .conteudo {
+    width: 100%;
+    max-width: none;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+body.menu-recolhido .rodape {
+    margin-left: 78px;
 }
