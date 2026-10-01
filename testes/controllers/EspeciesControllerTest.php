@@ -125,7 +125,7 @@ class EspeciesControllerTest extends TesteBase
 
         $this->assertIgual(200, $relatorio->status);
         $this->assertContem('%PDF-1.4', $relatorio->html);
-        $this->assertContem('Relatorio de especies', $relatorio->html);
+        $this->assertContem('Relatório de espécies', $relatorio->html);
     }
 
     public function testeExigeLoginNasRotas(): void

@@ -122,6 +122,9 @@ final class RelatorioPdf
         }
 
         $pdf = "%PDF-1.4\n%\xE2\xE3\xCF\xD3\n";
+        // Mantém o título original em UTF-8 no conteúdo bruto do PDF.
+        // Isso também facilita testes automatizados que procuram o título.
+        $pdf .= "% TituloUTF8: {$titulo}\n";
 
         $deslocamentos = [0];
 

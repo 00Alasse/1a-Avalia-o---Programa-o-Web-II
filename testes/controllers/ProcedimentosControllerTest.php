@@ -132,7 +132,7 @@ class ProcedimentosControllerTest extends TesteBase
 
         $this->assertIgual(200, $relatorio->status);
         $this->assertContem('%PDF-1.4', $relatorio->html);
-        $this->assertContem('Relatorio de procedimentos', $relatorio->html);
+        $this->assertContem('Relatório de procedimentos', $relatorio->html);
     }
 
     public function testeExigeLoginNasRotas(): void

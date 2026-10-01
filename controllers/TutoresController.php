@@ -21,9 +21,36 @@ class TutoresController extends Controller
     {
         $this->exigirAutenticacao();
 
+        $pesquisa = [];
+        $condicoes = [];
+        $parametros = [];
+
+        $termo = $this->get('nome');
+
+        if (is_scalar($termo) && (string) $termo !== '') {
+            $pesquisa['nome'] = (string) $termo;
+
+            $condicoes[] = '`nome` LIKE ? ESCAPE ' . Sql::ESCAPE_LIKE;
+            $parametros[] = Sql::comoLike((string) $termo);
+        }
+
+        $sql = 'SELECT * FROM ' . $this->modelo->tabelaProtegida();
+
+        if ($condicoes !== []) {
+            $sql .= ' WHERE ' . implode(' AND ', $condicoes);
+        }
+
+        $sql .= ' ORDER BY `id` DESC';
+
+        $registros = $this->modelo->consultar(
+            $sql,
+            $parametros
+        );
+
         $this->view('tutores/index', [
             'titulo' => 'Tutores',
-            'registros' => $this->modelo->todos(),
+            'registros' => $registros,
+            'pesquisa' => $pesquisa,
         ]);
     }
 

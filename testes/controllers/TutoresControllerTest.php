@@ -153,7 +153,7 @@ class TutoresControllerTest extends TesteBase
 
         $this->assertIgual(200, $relatorio->status);
         $this->assertContem('%PDF-1.4', $relatorio->html);
-        $this->assertContem('Relatorio de tutores', $relatorio->html);
+        $this->assertContem('Relatório de tutores', $relatorio->html);
     }
 
     public function testeExigeLoginNasRotas(): void

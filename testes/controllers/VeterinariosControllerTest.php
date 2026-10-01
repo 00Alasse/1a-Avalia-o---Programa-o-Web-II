@@ -146,7 +146,7 @@ class VeterinariosControllerTest extends TesteBase
 
         $this->assertIgual(200, $relatorio->status);
         $this->assertContem('%PDF-1.4', $relatorio->html);
-        $this->assertContem('Relatorio de veterinarios', $relatorio->html);
+        $this->assertContem('Relatório de veterinários', $relatorio->html);
     }
 
     public function testeExigeLoginNasRotas(): void

@@ -22,6 +22,13 @@ class VacinasControllerTest extends TesteBase
         $this->recriarTabelas([
             'animais' => 'CREATE TABLE `animais` (`id` INT AUTO_INCREMENT PRIMARY KEY, `nome` VARCHAR(255) NULL)',
             'veterinarios' => 'CREATE TABLE `veterinarios` (`id` INT AUTO_INCREMENT PRIMARY KEY, `nome` VARCHAR(255) NULL)',
+
+            'usuarios' => 'CREATE TABLE `usuarios` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `nome` VARCHAR(255) NULL,
+    `email` VARCHAR(255) NULL
+)',
+
             'vacinas' => "CREATE TABLE `vacinas` (
                 `id` INT AUTO_INCREMENT PRIMARY KEY,
                 `animal_id` INT NULL,
@@ -30,6 +37,7 @@ class VacinasControllerTest extends TesteBase
                 `lote` VARCHAR(255) NULL,
                 `data_aplicacao` DATE NULL,
                 `data_retorno` DATE NULL,
+                `usuario_id` INT NULL,
                 CONSTRAINT fk_vacinas_animal_id FOREIGN KEY (`animal_id`) REFERENCES `animais`(`id`),
                 CONSTRAINT fk_vacinas_veterinario_id FOREIGN KEY (`veterinario_id`) REFERENCES `veterinarios`(`id`)
             )",
@@ -41,6 +49,10 @@ class VacinasControllerTest extends TesteBase
         Database::conexao()->exec("INSERT INTO `veterinarios` (`nome`) VALUES ('Opcao 1'), ('Opcao 2')");
         $this->idsRelacoes['veterinario_id'] = (int) Database::conexao()->query('SELECT id FROM `veterinarios` ORDER BY id ASC LIMIT 1')->fetchColumn();
         $this->idsRelacoesAtualizadas['veterinario_id'] = (int) Database::conexao()->query('SELECT id FROM `veterinarios` ORDER BY id DESC LIMIT 1')->fetchColumn();
+        Database::conexao()->exec(
+            "INSERT INTO `usuarios` (`nome`, `email`)
+     VALUES ('Usuário Teste', 'teste@example.com')"
+        );
 
         $this->modelo = new Vacina();
         Sessao::definir(Sessao::chaveAutenticacao(), 1);
@@ -50,7 +62,7 @@ class VacinasControllerTest extends TesteBase
     {
         $lista = $this->requisitar('vacinas');
         $this->assertIgual(200, $lista->status);
-        $this->assertContem('animal_id', $lista->html);
+        $this->assertContem('Animal (ID)', $lista->html);
         $this->assertContem('vacinas/relatorio', $lista->html);
 
         $formulario = $this->requisitar('vacinas/criar');
@@ -163,7 +175,7 @@ class VacinasControllerTest extends TesteBase
 
         $this->assertIgual(200, $relatorio->status);
         $this->assertContem('%PDF-1.4', $relatorio->html);
-        $this->assertContem('Relatorio de vacinas', $relatorio->html);
+        $this->assertContem('Relatório de vacinas', $relatorio->html);
     }
 
     public function testeExigeLoginNasRotas(): void

@@ -21,19 +21,46 @@ class EspeciesController extends Controller
     {
         $this->exigirAutenticacao();
 
+        // Pesquisa por nome.
+        $pesquisa = [];
+        $condicoes = [];
+        $parametros = [];
+
+        $termo = $this->get('nome');
+
+        if (is_scalar($termo) && (string) $termo !== '') {
+            $pesquisa['nome'] = (string) $termo;
+            $condicoes[] = '`nome` LIKE ? ESCAPE ' . Sql::ESCAPE_LIKE;
+            $parametros[] = Sql::comoLike((string) $termo);
+        }
+
+        $sql = 'SELECT * FROM ' . $this->modelo->tabelaProtegida();
+
+        if ($condicoes !== []) {
+            $sql .= ' WHERE ' . implode(' AND ', $condicoes);
+        }
+
+        $sql .= ' ORDER BY `id` DESC';
+
+        $registros = $this->modelo->consultar(
+            $sql,
+            $parametros
+        );
+
         $this->view('especies/index', [
-            'titulo'    => 'Especies',
-            'registros' => $this->modelo->todos(),
+            'titulo' => 'Especies',
+            'registros' => $registros,
+            'pesquisa' => $pesquisa,
         ]);
     }
-
+    
     /** GET /especies/criar */
     public function criar(): void
     {
         $this->exigirAutenticacao();
 
         $this->view('especies/formulario', [
-            'titulo'   => 'Novo Especie',
+            'titulo' => 'Novo Especie',
             'registro' => null,
         ]);
     }
@@ -74,7 +101,7 @@ class EspeciesController extends Controller
         }
 
         $this->view('especies/ver', [
-            'titulo'   => 'Especie',
+            'titulo' => 'Especie',
             'registro' => $registro,
         ]);
     }
@@ -91,7 +118,7 @@ class EspeciesController extends Controller
         }
 
         $this->view('especies/formulario', [
-            'titulo'   => 'Editar Especie',
+            'titulo' => 'Editar Especie',
             'registro' => $registro,
         ]);
     }
@@ -134,7 +161,7 @@ class EspeciesController extends Controller
     {
         $this->exigirAutenticacao();
 
-        $condicoes  = [];
+        $condicoes = [];
         $parametros = [];
 
         $filtro = $this->get('id');
@@ -176,35 +203,35 @@ class EspeciesController extends Controller
      * nao conseguem apagar registros.
      */
     public function excluir(string $id): void
-{
-    $this->exigirAutenticacao();
+    {
+        $this->exigirAutenticacao();
 
-    $this->exigirFormularioValido();
+        $this->exigirFormularioValido();
 
-    if (!$this->modelo->existe($id)) {
-        $this->naoEncontrado();
-    }
-
-    try {
-        if (!$this->modelo->excluir($id)) {
+        if (!$this->modelo->existe($id)) {
             $this->naoEncontrado();
         }
-    } catch (\PDOException $e) {
-        // A espécie possui animais vinculados.
-        if ($e->getCode() === '23000') {
-            $this->mensagem(
-                'erro',
-                'Não é possível excluir esta espécie porque existem animais cadastrados para ela.'
-            );
-            $this->redirecionar('especies');
+
+        try {
+            if (!$this->modelo->excluir($id)) {
+                $this->naoEncontrado();
+            }
+        } catch (\PDOException $e) {
+            // A espécie possui animais vinculados.
+            if ($e->getCode() === '23000') {
+                $this->mensagem(
+                    'erro',
+                    'Não é possível excluir esta espécie porque existem animais cadastrados para ela.'
+                );
+                $this->redirecionar('especies');
+            }
+
+            // Se for outro erro do banco, deixa o framework
+            // tratar normalmente.
+            throw $e;
         }
 
-        // Se for outro erro do banco, deixa o framework
-        // tratar normalmente.
-        throw $e;
+        $this->mensagem('sucesso', 'Espécie excluída com sucesso.');
+        $this->redirecionar('especies');
     }
-
-    $this->mensagem('sucesso', 'Espécie excluída com sucesso.');
-    $this->redirecionar('especies');
-}
 }
