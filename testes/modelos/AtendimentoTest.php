@@ -17,7 +17,7 @@ class AtendimentoTest extends TesteBase
         $this->recriarTabelas([
             'animais' => 'CREATE TABLE `animais` (`id` INT AUTO_INCREMENT PRIMARY KEY, `nome` VARCHAR(255) NULL)',
             'veterinarios' => 'CREATE TABLE `veterinarios` (`id` INT AUTO_INCREMENT PRIMARY KEY, `nome` VARCHAR(255) NULL, `ativo` TINYINT(1) NULL DEFAULT 1)',
-            'procedimentos' => 'CREATE TABLE `procedimentos` (`id` INT AUTO_INCREMENT PRIMARY KEY, `nome` VARCHAR(255) NULL)',
+            'procedimentos' => 'CREATE TABLE `procedimentos` (`id` INT AUTO_INCREMENT PRIMARY KEY, `descricao` VARCHAR(255) NULL)',
             'usuarios' => 'CREATE TABLE `usuarios` (`id` INT AUTO_INCREMENT PRIMARY KEY, `nome` VARCHAR(255) NULL, `email` VARCHAR(255) NULL)',
             'atendimentos' => "CREATE TABLE `atendimentos` (
                 `id` INT AUTO_INCREMENT PRIMARY KEY,
@@ -43,7 +43,8 @@ class AtendimentoTest extends TesteBase
         $this->idsRelacoes['veterinario_id'] = (int) Database::conexao()->query('SELECT id FROM `veterinarios` ORDER BY id ASC LIMIT 1')->fetchColumn();
         $this->idsRelacoesAtualizadas['veterinario_id'] = (int) Database::conexao()->query('SELECT id FROM `veterinarios` ORDER BY id DESC LIMIT 1')->fetchColumn();
 
-        Database::conexao()->exec("INSERT INTO `procedimentos` (`nome`) VALUES ('Consulta'), ('Vacina')");        $this->idsRelacoes['procedimento_id'] = (int) Database::conexao()->query('SELECT id FROM `procedimentos` ORDER BY id ASC LIMIT 1')->fetchColumn();
+        Database::conexao()->exec("INSERT INTO `procedimentos` (`descricao`) VALUES ('Consulta'), ('Vacina')");
+        $this->idsRelacoes['procedimento_id'] = (int) Database::conexao()->query('SELECT id FROM `procedimentos` ORDER BY id ASC LIMIT 1')->fetchColumn();
         $this->idsRelacoesAtualizadas['procedimento_id'] = (int) Database::conexao()->query('SELECT id FROM `procedimentos` ORDER BY id DESC LIMIT 1')->fetchColumn();
 
         $this->modelo = new Atendimento();

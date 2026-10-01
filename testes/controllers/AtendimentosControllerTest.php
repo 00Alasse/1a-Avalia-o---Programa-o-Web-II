@@ -22,7 +22,7 @@ class AtendimentosControllerTest extends TesteBase
                 $this->recriarTabelas([
             'animais' => 'CREATE TABLE `animais` (`id` INT AUTO_INCREMENT PRIMARY KEY, `nome` VARCHAR(255) NULL)',
             'veterinarios' => 'CREATE TABLE `veterinarios` (`id` INT AUTO_INCREMENT PRIMARY KEY, `nome` VARCHAR(255) NULL, `ativo` TINYINT(1) NULL DEFAULT 1)',
-            'procedimentos' => 'CREATE TABLE `procedimentos` (`id` INT AUTO_INCREMENT PRIMARY KEY, `nome` VARCHAR(255) NULL)',
+            'procedimentos' => 'CREATE TABLE `procedimentos` (`id` INT AUTO_INCREMENT PRIMARY KEY, `descricao` VARCHAR(255) NULL)',
             'usuarios' => 'CREATE TABLE `usuarios` (`id` INT AUTO_INCREMENT PRIMARY KEY, `nome` VARCHAR(255) NULL, `email` VARCHAR(255) NULL)',
             'atendimentos' => "CREATE TABLE `atendimentos` (
                 `id` INT AUTO_INCREMENT PRIMARY KEY,
@@ -45,7 +45,7 @@ class AtendimentosControllerTest extends TesteBase
         $this->idsRelacoesAtualizadas['animal_id'] = (int) Database::conexao()->query('SELECT id FROM `animais` ORDER BY id DESC LIMIT 1')->fetchColumn();
         Database::conexao()->exec("INSERT INTO `veterinarios` (`nome`, `ativo`) VALUES ('Opcao 1', 1), ('Opcao 2', 1)");            $this->idsRelacoes['veterinario_id'] = (int) Database::conexao()->query('SELECT id FROM `veterinarios` ORDER BY id ASC LIMIT 1')->fetchColumn();
         $this->idsRelacoesAtualizadas['veterinario_id'] = (int) Database::conexao()->query('SELECT id FROM `veterinarios` ORDER BY id DESC LIMIT 1')->fetchColumn();
-        Database::conexao()->exec("INSERT INTO `procedimentos` (`nome`) VALUES ('Opcao 1'), ('Opcao 2')");
+        Database::conexao()->exec("INSERT INTO `procedimentos` (`descricao`) VALUES ('Opcao 1'), ('Opcao 2')");
         $this->idsRelacoes['procedimento_id'] = (int) Database::conexao()->query('SELECT id FROM `procedimentos` ORDER BY id ASC LIMIT 1')->fetchColumn();
         $this->idsRelacoesAtualizadas['procedimento_id'] = (int) Database::conexao()->query('SELECT id FROM `procedimentos` ORDER BY id DESC LIMIT 1')->fetchColumn();
 
@@ -71,7 +71,7 @@ class AtendimentosControllerTest extends TesteBase
             'data_hora' => '2026-12-01 10:00:00',
             'valor_cobrado' => 10.5,
             'observacoes_clinicas' => 'Teste',
-            'situacao' => 'Teste',
+            'situacao' => 'agendado',
         ]);
         $this->assertVerdadeiro($salvar->redirecionouPara('atendimentos/ver/1'));
 
@@ -96,7 +96,7 @@ class AtendimentosControllerTest extends TesteBase
             'data_hora' => '2026-12-02 12:00:00',
             'valor_cobrado' => 20.5,
             'observacoes_clinicas' => 'Atualizado',
-            'situacao' => 'Atualizado',
+            'situacao' => 'agendado',
         ]);
         $this->assertVerdadeiro($atualizar->redirecionouPara('atendimentos/ver/' . $id));
         $this->assertIgual($this->idsRelacoesAtualizadas['animal_id'], $this->modelo->buscar($id)['animal_id']);
@@ -176,7 +176,7 @@ class AtendimentosControllerTest extends TesteBase
 
         $this->assertIgual(200, $relatorio->status);
         $this->assertContem('%PDF-1.4', $relatorio->html);
-        $this->assertContem('Relatorio de atendimentos', $relatorio->html);
+        $this->assertContem('Relatório de atendimentos', $relatorio->html);
     }
 
     public function testeExigeLoginNasRotas(): void

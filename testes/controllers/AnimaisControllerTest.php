@@ -20,22 +20,60 @@ class AnimaisControllerTest extends TesteBase
         // Cada teste monta as proprias tabelas: a ordem em que as
         // classes rodam nao interfere no resultado.
         $this->recriarTabelas([
-            'tutores' => 'CREATE TABLE `tutores` (`id` INT AUTO_INCREMENT PRIMARY KEY, `nome` VARCHAR(255) NULL)',
-            'especies' => 'CREATE TABLE `especies` (`id` INT AUTO_INCREMENT PRIMARY KEY, `nome` VARCHAR(255) NULL)',
+            'tutores' => 'CREATE TABLE `tutores` (
+        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `nome` VARCHAR(255) NULL
+    )',
+
+            'especies' => 'CREATE TABLE `especies` (
+        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `nome` VARCHAR(255) NULL
+    )',
+
+            'veterinarios' => 'CREATE TABLE `veterinarios` (
+        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `nome` VARCHAR(255) NULL
+    )',
+
+            'procedimentos' => 'CREATE TABLE `procedimentos` (
+        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `descricao` VARCHAR(255) NULL
+    )',
+
             'animais' => "CREATE TABLE `animais` (
-                `id` INT AUTO_INCREMENT PRIMARY KEY,
-                `nome` VARCHAR(255) NULL,
-                `raca` VARCHAR(255) NULL,
-                `data_nascimento` DATE NULL,
-                `sexo` VARCHAR(255) NULL,
-                `peso` DECIMAL(12,2) NULL,
-                `castrado` TINYINT(1) NULL,
-                `observacoes` TEXT NULL,
-                `tutor_id` INT NULL,
-                `especie_id` INT NULL,
-                CONSTRAINT fk_animais_tutor_id FOREIGN KEY (`tutor_id`) REFERENCES `tutores`(`id`),
-                CONSTRAINT fk_animais_especie_id FOREIGN KEY (`especie_id`) REFERENCES `especies`(`id`)
-            )",
+        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `nome` VARCHAR(255) NULL,
+        `raca` VARCHAR(255) NULL,
+        `data_nascimento` DATE NULL,
+        `sexo` VARCHAR(255) NULL,
+        `peso` DECIMAL(12,2) NULL,
+        `castrado` TINYINT(1) NULL,
+        `observacoes` TEXT NULL,
+        `tutor_id` INT NULL,
+        `especie_id` INT NULL,
+        CONSTRAINT fk_animais_tutor_id
+            FOREIGN KEY (`tutor_id`) REFERENCES `tutores`(`id`),
+        CONSTRAINT fk_animais_especie_id
+            FOREIGN KEY (`especie_id`) REFERENCES `especies`(`id`)
+    )",
+
+            'atendimentos' => "CREATE TABLE `atendimentos` (
+        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `animal_id` INT NULL,
+        `veterinario_id` INT NULL,
+        `procedimento_id` INT NULL,
+        `data_hora` DATETIME NULL
+    )",
+
+            'vacinas' => "CREATE TABLE `vacinas` (
+        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `animal_id` INT NULL,
+        `veterinario_id` INT NULL,
+        `nome_vacina` VARCHAR(255) NULL,
+        `lote` VARCHAR(255) NULL,
+        `data_aplicacao` DATE NULL,
+        `data_retorno` DATE NULL
+    )",
         ]);
 
         Database::conexao()->exec("INSERT INTO `tutores` (`nome`) VALUES ('Opcao 1'), ('Opcao 2')");
@@ -184,7 +222,7 @@ class AnimaisControllerTest extends TesteBase
 
         $this->assertIgual(200, $relatorio->status);
         $this->assertContem('%PDF-1.4', $relatorio->html);
-        $this->assertContem('Relatorio de animais', $relatorio->html);
+        $this->assertContem('Relatório de animais', $relatorio->html);
     }
 
     public function testeExigeLoginNasRotas(): void
