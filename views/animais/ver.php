@@ -41,7 +41,8 @@
 
                 <dt class="col-sm-4 text-secondary">Data de Nascimento</dt>
                 <dd class="col-sm-8">
-                    <?= !empty($registro['data_nascimento']) ? e(data_br($registro['data_nascimento'])) : '—' ?></dd>
+                    <?= !empty($registro['data_nascimento']) ? e(data_br($registro['data_nascimento'])) : '—' ?>
+                </dd>
 
                 <!-- RF07: Idade calculada a partir de data_nascimento -->
                 <dt class="col-sm-4 text-primary">Idade Calculada</dt>
@@ -75,16 +76,16 @@
                         <dd class="col-sm-8 fw-bold"><?= e($tutor['nome']) ?></dd>
 
                         <dt class="col-sm-4 text-secondary">CPF</dt>
-                        <dd class="col-sm-8"><?= e($tutor['cpf']) ?></dd>
+                        <dd class="col-sm-8"><?= e($tutor['cpf'] ?? 'Não informado') ?></dd>
 
                         <dt class="col-sm-4 text-secondary">Telefone</dt>
-                        <dd class="col-sm-8"><?= e($tutor['telefone']) ?></dd>
+                        <dd class="col-sm-8"><?= e($tutor['telefone'] ?? 'Não informado') ?></dd>
 
                         <dt class="col-sm-4 text-secondary">E-mail</dt>
-                        <dd class="col-sm-8"><?= e($tutor['email']) ?></dd>
+                        <dd class="col-sm-8"><?= e($tutor['email'] ?? 'Não informado') ?></dd>
 
                         <dt class="col-sm-4 text-secondary">Endereço</dt>
-                        <dd class="col-sm-8"><?= e($tutor['endereco']) ?></dd>
+                        <dd class="col-sm-8"><?= e($tutor['endereco'] ?? 'Não informado') ?></dd>
                     </dl>
                 <?php else: ?>
                     <p class="text-muted mb-0">Nenhum tutor vinculado.</p>

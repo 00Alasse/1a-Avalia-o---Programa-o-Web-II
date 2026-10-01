@@ -22,7 +22,7 @@ class ViewTest extends TesteBase
         $html = View::capturar('home/sobre', ['titulo' => 'Sobre']);
 
         $this->assertContem('<!DOCTYPE html>', $html, 'Deve vir dentro do template');
-        $this->assertContem('Como funciona o framework', $html);
+        $this->assertContem('Como funciona a', $html);
     }
 
     public function testeRenderizaViewSemTemplate(): void
@@ -30,7 +30,7 @@ class ViewTest extends TesteBase
         $html = View::capturar('home/sobre', ['titulo' => 'Sobre'], null);
 
         $this->assertNaoContem('<!DOCTYPE html>', $html, 'Sem layout nao deve ter o HTML da pagina');
-        $this->assertContem('Como funciona o framework', $html);
+        $this->assertContem('Como funciona a', $html);
     }
 
     public function testeViewInexistenteDisparaErroExplicativo(): void
@@ -43,9 +43,9 @@ class ViewTest extends TesteBase
     public function testeVariaveisChegamNaView(): void
     {
         $html = View::capturar('erros/404', [
-            'titulo'   => 'Teste',
+            'titulo' => 'Teste',
             'mensagem' => 'mensagem-de-teste',
-            'rota'     => 'rota-de-teste',
+            'rota' => 'rota-de-teste',
         ]);
 
         $this->assertContem('rota-de-teste', $html);

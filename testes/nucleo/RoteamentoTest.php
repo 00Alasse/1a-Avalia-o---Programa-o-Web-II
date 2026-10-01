@@ -98,10 +98,13 @@ class RoteamentoTest extends TesteBase
 
     public function testeRaizAbreAPaginaInicial(): void
     {
+        $this->limparSessao();
+
         $resposta = $this->requisitar('');
 
         $this->assertIgual(200, $resposta->status);
-        $this->assertContem('Bem-vindo ao framework MVC', $resposta->html);
+        $this->assertContem('Clínica Veterinária Pata Amiga', $resposta->html);
+        $this->assertContem('Área da Equipe (Entrar)', $resposta->html);
     }
 
     public function testeControladorInexistenteRetorna404(): void
@@ -148,6 +151,6 @@ class RoteamentoTest extends TesteBase
     {
         $html = $this->requisitar('home')->html;
 
-        $this->assertContem('<title>Inicio |', $html);
+        $this->assertContem('<title>Início |', $html);
     }
 }

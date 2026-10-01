@@ -117,6 +117,21 @@ $iconesMenu = [
                 </a>
             <?php endforeach ?>
 
+            <div class="sidebar__rotulo sidebar__rotulo-conta">
+                Sistema
+            </div>
+
+            <a class="sidebar__item <?= $secao === 'home' ? 'sidebar__item--ativo' : '' ?>"
+                href="<?= url('home/sobre') ?>" title="Sobre o sistema">
+                <span class="sidebar__icone">
+                    <i class="bi bi-info-circle"></i>
+                </span>
+
+                <span class="sidebar__texto">
+                    Sobre o sistema
+                </span>
+            </a>
+
         </nav>
     </aside>
 
