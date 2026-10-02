@@ -10,12 +10,18 @@ use Modelos\Vacina;
  */
 class HomeController extends Controller
 {
-    public function index(): void
+        public function index(): void
     {
         $vacinasVencidas = [];
         $vacinasProximas = [];
+        $indicadoresMes  = [
+            'atendimentos_mes' => 0,
+            'faturamento_mes'  => 0.0,
+            'total_animais'    => 0,
+            'vacinas_alerta'   => 0,
+        ];
 
-        // RF15: Apenas para a equipe logada, busca os retornos vencidos e a vencer
+        // RF15 e Desafio Bônus: Apenas para a equipe logada
         if (autenticado()) {
             $modeloVacina = new Vacina();
             $hoje = date('Y-m-d');
@@ -40,12 +46,31 @@ class HomeController extends Controller
 
             $vacinasVencidas = $modeloVacina->consultar($sqlVencidas, [$hoje]);
             $vacinasProximas = $modeloVacina->consultar($sqlProximas, [$hoje, $trintaDias]);
+
+            // Bônus 1: Indicadores do mês atual
+            $sqlAtendimentos = "SELECT COUNT(*) AS total, COALESCE(SUM(valor_cobrado), 0) AS faturamento 
+                                FROM atendimentos 
+                                WHERE situacao = 'realizado' 
+                                  AND MONTH(data_hora) = MONTH(CURRENT_DATE()) 
+                                  AND YEAR(data_hora) = YEAR(CURRENT_DATE())";
+            $resAtendimentos = $modeloVacina->consultar($sqlAtendimentos);
+
+            $sqlAnimais = "SELECT COUNT(*) AS total FROM animais";
+            $resAnimais = $modeloVacina->consultar($sqlAnimais);
+
+            $indicadoresMes = [
+                'atendimentos_mes' => (int) ($resAtendimentos[0]['total'] ?? 0),
+                'faturamento_mes'  => (float) ($resAtendimentos[0]['faturamento'] ?? 0),
+                'total_animais'    => (int) ($resAnimais[0]['total'] ?? 0),
+                'vacinas_alerta'   => count($vacinasVencidas) + count($vacinasProximas),
+            ];
         }
 
         $this->view('home/index', [
             'titulo'          => 'Início',
             'vacinasVencidas' => $vacinasVencidas,
             'vacinasProximas' => $vacinasProximas,
+            'indicadoresMes'  => $indicadoresMes,
         ]);
     }
 

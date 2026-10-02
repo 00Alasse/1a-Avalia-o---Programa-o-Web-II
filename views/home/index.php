@@ -12,6 +12,46 @@
     </div>
 </div>
 
+<!-- Desafio Bônus 1: Painel com Indicadores do Mês -->
+<div class="row g-3 mb-4">
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card border-0 shadow-sm p-3 h-100">
+            <span class="text-secondary small text-uppercase fw-semibold">Atendimentos no Mês</span>
+            <div class="d-flex align-items-center justify-content-between mt-2">
+                <span class="fs-3 fw-bold text-primary"><?= (int) ($indicadoresMes['atendimentos_mes'] ?? 0) ?></span>
+                <span class="badge bg-primary-subtle text-primary fs-6">Realizados</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card border-0 shadow-sm p-3 h-100">
+            <span class="text-secondary small text-uppercase fw-semibold">Faturamento do Mês</span>
+            <div class="d-flex align-items-center justify-content-between mt-2">
+                <span class="fs-3 fw-bold text-success">R$ <?= e(moeda_br($indicadoresMes['faturamento_mes'] ?? 0)) ?></span>
+                <span class="badge bg-success-subtle text-success fs-6">Entrada</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card border-0 shadow-sm p-3 h-100">
+            <span class="text-secondary small text-uppercase fw-semibold">Pacientes Cadastrados</span>
+            <div class="d-flex align-items-center justify-content-between mt-2">
+                <span class="fs-3 fw-bold text-dark"><?= (int) ($indicadoresMes['total_animais'] ?? 0) ?></span>
+                <span class="badge bg-light text-dark fs-6">Animais</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card border-0 shadow-sm p-3 h-100">
+            <span class="text-secondary small text-uppercase fw-semibold">Vacinas em Alerta</span>
+            <div class="d-flex align-items-center justify-content-between mt-2">
+                <span class="fs-3 fw-bold text-danger"><?= (int) ($indicadoresMes['vacinas_alerta'] ?? 0) ?></span>
+                <span class="badge bg-danger-subtle text-danger fs-6">Pendentes</span>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="row g-4 mb-4">
     <div class="col-12 col-lg-8">
         <div class="card border-0 shadow-sm h-100">
