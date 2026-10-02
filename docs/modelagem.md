@@ -1,4 +1,4 @@
-Set-Content -Path "docs/modelagem.md" -Value '# Modelagem de Dados — Clínica Veterinária Pata Amiga
+# Modelagem de Dados — Clínica Veterinária Pata Amiga
 
 ## Entidades e Atributos
 
@@ -87,4 +87,4 @@ Vacinas aplicadas e retornos (RF14, RF15, RF18).
 - animais 1:N vacinas
 - veterinarios 1:N vacinas
 - usuarios 1:N atendimentos (autoria)
-- usuarios 1:N vacinas (autoria)' -Encoding utf8
+- usuarios 1:N vacinas (autoria)
