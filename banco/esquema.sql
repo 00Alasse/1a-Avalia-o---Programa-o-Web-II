@@ -52,6 +52,7 @@ CREATE TABLE IF NOT EXISTS `animais` (
     `observacoes` TEXT NULL,
     `tutor_id` INT NULL,
     `especie_id` INT NULL,
+    `foto` VARCHAR(255) NULL,
     CONSTRAINT fk_animais_tutor_id FOREIGN KEY (`tutor_id`) REFERENCES `tutores`(`id`),
     CONSTRAINT fk_animais_especie_id FOREIGN KEY (`especie_id`) REFERENCES `especies`(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

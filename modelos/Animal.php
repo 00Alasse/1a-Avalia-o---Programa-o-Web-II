@@ -8,7 +8,7 @@ use Nucleo\Validador;
 class Animal extends Model
 {
     protected string $tabela = 'animais';
-    protected array $preenchiveis = ['nome', 'raca', 'data_nascimento', 'sexo', 'peso', 'castrado', 'observacoes', 'tutor_id', 'especie_id'];
+    protected array $preenchiveis = ['nome', 'raca', 'data_nascimento', 'sexo', 'peso', 'castrado', 'observacoes', 'tutor_id', 'especie_id', 'foto'];
     protected string $ordemPadrao = 'id DESC';
 
     /**

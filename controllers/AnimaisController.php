@@ -6,6 +6,7 @@ use Modelos\Animal;
 use Nucleo\Controller;
 use Nucleo\RelatorioPdf;
 use Nucleo\Sql;
+use Nucleo\Arquivo;
 
 class AnimaisController extends Controller
 {
@@ -105,6 +106,20 @@ class AnimaisController extends Controller
 
         $this->exigirFormularioValido();
 
+        $foto = Arquivo::de(
+            'foto',
+            ['jpg', 'jpeg'],
+            4096,
+            true
+        );
+
+        if ($foto !== null && !$foto->valido()) {
+            $this->voltarComErros(
+                ['foto' => $foto->problema()],
+                'animais/criar'
+            );
+        }
+
         $dados = [
             'nome' => $this->post('nome'),
             'raca' => $this->post('raca'),
@@ -124,6 +139,14 @@ class AnimaisController extends Controller
         }
 
         $id = $this->modelo->criar($dados);
+
+        if ($foto !== null) {
+            $caminhoFoto = $foto->salvar('animais');
+
+            $this->modelo->atualizar($id, [
+                'foto' => $caminhoFoto,
+            ]);
+        }
 
         $this->mensagem('sucesso', 'Animal criado com sucesso.');
         $this->redirecionar('animais/ver/' . $id);
@@ -244,6 +267,22 @@ class AnimaisController extends Controller
             $this->naoEncontrado();
         }
 
+        $animalAtual = $this->modelo->buscar($id);
+
+        $foto = Arquivo::de(
+            'foto',
+            Arquivo::IMAGENS,
+            4096,
+            true
+        );
+
+        if ($foto !== null && !$foto->valido()) {
+            $this->voltarComErros(
+                ['foto' => $foto->problema()],
+                'animais/editar/' . $id
+            );
+        }
+
         $dados = [
             'nome' => $this->post('nome'),
             'raca' => $this->post('raca'),
@@ -262,7 +301,17 @@ class AnimaisController extends Controller
             $this->voltarComErros($erros, 'animais/editar/' . $id);
         }
 
+        if ($foto !== null) {
+            $caminhoFoto = $foto->salvar('animais');
+
+            $dados['foto'] = $caminhoFoto;
+        }
+
         $this->modelo->atualizar($id, $dados);
+
+        if ($foto !== null && !empty($animalAtual['foto'])) {
+            Arquivo::apagar($animalAtual['foto']);
+        }
 
         $this->mensagem('sucesso', 'Animal atualizado com sucesso.');
         $this->redirecionar('animais/ver/' . $id);

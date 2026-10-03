@@ -26,6 +26,15 @@
             <div class="card-header bg-white py-3">
                 <h5 class="card-title mb-0">Informações do Animal</h5>
             </div>
+
+            <?php if (!empty($registro['foto'])): ?>
+                <div class="text-center p-3 border-bottom">
+                    <img src="<?= e(asset($registro['foto'])) ?>" alt="Foto de <?= e($registro['nome']) ?>"
+                        class="img-fluid rounded shadow-sm"
+                        style="max-height: 280px; max-width: 100%; object-fit: contain;">
+                </div>
+            <?php endif; ?>
+
             <dl class="row g-0 mb-0 p-3">
                 <dt class="col-sm-4 text-secondary">Identificador</dt>
                 <dd class="col-sm-8">#<?= e($registro['id']) ?></dd>

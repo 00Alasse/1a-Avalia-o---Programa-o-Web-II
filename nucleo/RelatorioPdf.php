@@ -122,18 +122,14 @@ final class RelatorioPdf
         }
 
         $pdf = "%PDF-1.4\n%\xE2\xE3\xCF\xD3\n";
-        // Mantém o título original em UTF-8 no conteúdo bruto do PDF.
-        // Isso também facilita testes automatizados que procuram o título.
-        $pdf .= "% TituloUTF8: {$titulo}\n";
+
+        $ultimoObjeto = max(array_keys($objetos));
 
         $deslocamentos = [0];
 
-        for (
-            $id = 1;
-            $id <= $quantidadeObjetos;
-            $id++
-        ) {
-            $deslocamentos[$id] = strlen($pdf);
+        for ($id = 1; $id <= $ultimoObjeto; $id++) {
+            $deslocamentos[$id] =
+                strlen($pdf);
 
             $pdf .= "{$id} 0 obj\n";
             $pdf .= $objetos[$id] . "\n";
@@ -144,14 +140,10 @@ final class RelatorioPdf
 
         $pdf .=
             "xref\n"
-            . "0 " . ($quantidadeObjetos + 1) . "\n"
+            . "0 " . ($ultimoObjeto + 1) . "\n"
             . "0000000000 65535 f \n";
 
-        for (
-            $id = 1;
-            $id <= $quantidadeObjetos;
-            $id++
-        ) {
+        for ($id = 1; $id <= $ultimoObjeto; $id++) {
             $pdf .= sprintf(
                 "%010d 00000 n \n",
                 $deslocamentos[$id]
@@ -160,8 +152,7 @@ final class RelatorioPdf
 
         $pdf .=
             "trailer\n"
-            . "<< /Size " . ($quantidadeObjetos + 1)
-            . " /Root 1 0 R >>\n"
+            . "<< /Size " . ($ultimoObjeto + 1) . " /Root 1 0 R >>\n"
             . "startxref\n"
             . $inicioXref
             . "\n%%EOF\n";
@@ -708,6 +699,39 @@ final class RelatorioPdf
             ) ?? '';
     }
 
+    private static function imagemJpeg(
+        ?string $caminho
+    ): ?array {
+        if (
+            $caminho === null
+            || $caminho === ''
+            || !is_file($caminho)
+        ) {
+            return null;
+        }
+
+        $informacoes = @getimagesize($caminho);
+
+        if (
+            $informacoes === false
+            || ($informacoes['mime'] ?? '') !== 'image/jpeg'
+        ) {
+            return null;
+        }
+
+        $dados = @file_get_contents($caminho);
+
+        if ($dados === false || $dados === '') {
+            return null;
+        }
+
+        return [
+            'largura' => (int) $informacoes[0],
+            'altura' => (int) $informacoes[1],
+            'dados' => $dados,
+        ];
+    }
+
     private static function textoPdf(
         string $texto
     ): string {
@@ -786,6 +810,17 @@ final class RelatorioPdf
         $largura =
             595.0 - ($margem * 2);
 
+        $imagem = null;
+
+        if (!empty($animal['foto'])) {
+            $caminhoFoto =
+                CAMINHO_VIEWS
+                . '/'
+                . ltrim($animal['foto'], '/');
+
+            $imagem = self::imagemJpeg($caminhoFoto);
+        }
+
         /*
          * Garante que a espécie usada no PDF
          * seja a correspondente ao animal.
@@ -839,7 +874,7 @@ final class RelatorioPdf
          */
         $stream .=
             "0.93 0.95 0.97 rg\n"
-            . "36 690 523 55 re f\n";
+            . "36 675 523 70 re f\n";
 
         $stream .= self::textoBloco(
             'DADOS DO ANIMAL',
@@ -900,6 +935,60 @@ final class RelatorioPdf
             8,
             false
         );
+
+        if ($imagem !== null) {
+            $caixaFoto = 56.0;
+
+            $xCaixa = 497.0;
+            $yCaixa = 682.0;
+
+            $larguraOriginal = (float) $imagem['largura'];
+            $alturaOriginal = (float) $imagem['altura'];
+
+            $escala = min(
+                $caixaFoto / $larguraOriginal,
+                $caixaFoto / $alturaOriginal
+            );
+
+            $larguraFoto =
+                $larguraOriginal * $escala;
+
+            $alturaFoto =
+                $alturaOriginal * $escala;
+
+            $xFoto =
+                $xCaixa
+                + (($caixaFoto - $larguraFoto) / 2);
+
+            $yFoto =
+                $yCaixa
+                + (($caixaFoto - $alturaFoto) / 2);
+
+            $stream .=
+                "0.75 0.78 0.82 RG\n"
+                . "0.5 w\n"
+                . self::numero($xCaixa)
+                . " "
+                . self::numero($yCaixa)
+                . " "
+                . self::numero($caixaFoto)
+                . " "
+                . self::numero($caixaFoto)
+                . " re S\n";
+
+            $stream .=
+                "q\n"
+                . self::numero($larguraFoto)
+                . " 0 0 "
+                . self::numero($alturaFoto)
+                . " "
+                . self::numero($xFoto)
+                . " "
+                . self::numero($yFoto)
+                . " cm\n"
+                . "/Foto Do\n"
+                . "Q\n";
+        }
 
         /*
          * TUTOR
@@ -1221,16 +1310,50 @@ final class RelatorioPdf
          */
         $objetos = [];
 
+        $idsImagem = [];
+
+        if ($imagem !== null) {
+            $idsImagem['foto'] = 6;
+
+            $objetos[6] =
+                '<< /Type /XObject '
+                . '/Subtype /Image '
+                . '/Width ' . $imagem['largura'] . ' '
+                . '/Height ' . $imagem['altura'] . ' '
+                . '/ColorSpace /DeviceRGB '
+                . '/BitsPerComponent 8 '
+                . '/Filter /DCTDecode '
+                . '/Length ' . strlen($imagem['dados'])
+                . " >>\n"
+                . "stream\n"
+                . $imagem['dados']
+                . "\nendstream";
+        }
+
         $objetos[1] =
             '<< /Type /Catalog /Pages 2 0 R >>';
 
         $objetos[2] =
             '<< /Type /Pages /Kids [3 0 R] /Count 1 >>';
 
+        $recursosPagina =
+            '<< /Font << /F1 4 0 R >>';
+
+        if ($imagem !== null) {
+            $recursosPagina .=
+                ' /XObject << /Foto '
+                . $idsImagem['foto']
+                . ' 0 R >>';
+        }
+
+        $recursosPagina .= ' >>';
+
         $objetos[3] =
             '<< /Type /Page /Parent 2 0 R '
             . '/MediaBox [0 0 595 842] '
-            . '/Resources << /Font << /F1 4 0 R >> >> '
+            . '/Resources '
+            . $recursosPagina
+            . ' '
             . '/Contents 5 0 R >>';
 
         $objetos[4] =
@@ -1247,9 +1370,11 @@ final class RelatorioPdf
 
         $pdf = "%PDF-1.4\n%\xE2\xE3\xCF\xD3\n";
 
+        $ultimoObjeto = max(array_keys($objetos));
+
         $deslocamentos = [0];
 
-        for ($id = 1; $id <= 5; $id++) {
+        for ($id = 1; $id <= $ultimoObjeto; $id++) {
             $deslocamentos[$id] =
                 strlen($pdf);
 
@@ -1262,10 +1387,10 @@ final class RelatorioPdf
 
         $pdf .=
             "xref\n"
-            . "0 6\n"
+            . "0 " . ($ultimoObjeto + 1) . "\n"
             . "0000000000 65535 f \n";
 
-        for ($id = 1; $id <= 5; $id++) {
+        for ($id = 1; $id <= $ultimoObjeto; $id++) {
             $pdf .= sprintf(
                 "%010d 00000 n \n",
                 $deslocamentos[$id]
@@ -1274,7 +1399,7 @@ final class RelatorioPdf
 
         $pdf .=
             "trailer\n"
-            . "<< /Size 6 /Root 1 0 R >>\n"
+            . "<< /Size " . ($ultimoObjeto + 1) . " /Root 1 0 R >>\n"
             . "startxref\n"
             . $inicioXref
             . "\n%%EOF\n";
