@@ -18,13 +18,35 @@
 <!-- scaffold:pesquisa inicio -->
 <form class="card border-0 shadow-sm p-3 mb-3" method="get" action="<?= url('atendimentos') ?>">
     <div class="row g-2 align-items-end">
+
         <div class="col-12 col-sm-6 col-lg-3">
-            <label class="form-label small text-secondary mb-1" for="pesquisa_data_hora">Data do Atendimento</label>
+            <label class="form-label small text-secondary mb-1" for="pesquisa_data_hora">
+                Data do Atendimento
+            </label>
             <input class="form-control" id="pesquisa_data_hora" type="date" name="data_hora"
                 value="<?= e($pesquisa['data_hora'] ?? '') ?>">
         </div>
+
         <div class="col-12 col-sm-6 col-lg-3">
-            <label class="form-label small text-secondary mb-1" for="pesquisa_veterinario_id">Veterinário</label>
+            <label class="form-label small text-secondary mb-1" for="pesquisa_data_inicial">
+                Data Inicial
+            </label>
+            <input class="form-control" id="pesquisa_data_inicial" type="date" name="data_inicial"
+                value="<?= e($pesquisa['data_inicial'] ?? '') ?>">
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-3">
+            <label class="form-label small text-secondary mb-1" for="pesquisa_data_final">
+                Data Final
+            </label>
+            <input class="form-control" id="pesquisa_data_final" type="date" name="data_final"
+                value="<?= e($pesquisa['data_final'] ?? '') ?>">
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-3">
+            <label class="form-label small text-secondary mb-1" for="pesquisa_veterinario_id">
+                Veterinário
+            </label>
             <?php $escolhido = (string) ($pesquisa['veterinario_id'] ?? ''); ?>
             <select class="form-select" id="pesquisa_veterinario_id" name="veterinario_id">
                 <option value="">Todos</option>
@@ -35,15 +57,20 @@
                 <?php endforeach ?>
             </select>
         </div>
+
         <div class="col-12 col-sm-6 col-lg-3">
-            <label class="form-label small text-secondary mb-1" for="pesquisa_situacao">Situação</label>
+            <label class="form-label small text-secondary mb-1" for="pesquisa_situacao">
+                Situação
+            </label>
             <input class="form-control" id="pesquisa_situacao" type="text" name="situacao"
                 placeholder="agendado, realizado..." value="<?= e($pesquisa['situacao'] ?? '') ?>">
         </div>
+
         <div class="col-12 col-lg-auto d-flex gap-2">
             <button class="btn btn-primary" type="submit">Pesquisar</button>
             <a class="btn btn-outline-secondary" href="<?= url('atendimentos') ?>">Limpar</a>
         </div>
+
     </div>
 </form>
 <!-- scaffold:pesquisa fim -->

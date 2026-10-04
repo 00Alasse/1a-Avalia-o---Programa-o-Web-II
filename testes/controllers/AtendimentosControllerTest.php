@@ -19,7 +19,7 @@ class AtendimentosControllerTest extends TesteBase
 
         // Cada teste monta as proprias tabelas: a ordem em que as
         // classes rodam nao interfere no resultado.
-                $this->recriarTabelas([
+        $this->recriarTabelas([
             'animais' => 'CREATE TABLE `animais` (`id` INT AUTO_INCREMENT PRIMARY KEY, `nome` VARCHAR(255) NULL)',
             'veterinarios' => 'CREATE TABLE `veterinarios` (`id` INT AUTO_INCREMENT PRIMARY KEY, `nome` VARCHAR(255) NULL, `ativo` TINYINT(1) NULL DEFAULT 1)',
             'procedimentos' => 'CREATE TABLE `procedimentos` (`id` INT AUTO_INCREMENT PRIMARY KEY, `descricao` VARCHAR(255) NULL)',
@@ -43,7 +43,8 @@ class AtendimentosControllerTest extends TesteBase
         Database::conexao()->exec("INSERT INTO `animais` (`nome`) VALUES ('Opcao 1'), ('Opcao 2')");
         $this->idsRelacoes['animal_id'] = (int) Database::conexao()->query('SELECT id FROM `animais` ORDER BY id ASC LIMIT 1')->fetchColumn();
         $this->idsRelacoesAtualizadas['animal_id'] = (int) Database::conexao()->query('SELECT id FROM `animais` ORDER BY id DESC LIMIT 1')->fetchColumn();
-        Database::conexao()->exec("INSERT INTO `veterinarios` (`nome`, `ativo`) VALUES ('Opcao 1', 1), ('Opcao 2', 1)");            $this->idsRelacoes['veterinario_id'] = (int) Database::conexao()->query('SELECT id FROM `veterinarios` ORDER BY id ASC LIMIT 1')->fetchColumn();
+        Database::conexao()->exec("INSERT INTO `veterinarios` (`nome`, `ativo`) VALUES ('Opcao 1', 1), ('Opcao 2', 1)");
+        $this->idsRelacoes['veterinario_id'] = (int) Database::conexao()->query('SELECT id FROM `veterinarios` ORDER BY id ASC LIMIT 1')->fetchColumn();
         $this->idsRelacoesAtualizadas['veterinario_id'] = (int) Database::conexao()->query('SELECT id FROM `veterinarios` ORDER BY id DESC LIMIT 1')->fetchColumn();
         Database::conexao()->exec("INSERT INTO `procedimentos` (`descricao`) VALUES ('Opcao 1'), ('Opcao 2')");
         $this->idsRelacoes['procedimento_id'] = (int) Database::conexao()->query('SELECT id FROM `procedimentos` ORDER BY id ASC LIMIT 1')->fetchColumn();
@@ -57,7 +58,7 @@ class AtendimentosControllerTest extends TesteBase
     {
         $lista = $this->requisitar('atendimentos');
         $this->assertIgual(200, $lista->status);
-        $this->assertContem('Animal', $lista->html);        
+        $this->assertContem('Animal', $lista->html);
         $this->assertContem('atendimentos/relatorio', $lista->html);
 
         $formulario = $this->requisitar('atendimentos/criar');
@@ -177,6 +178,156 @@ class AtendimentosControllerTest extends TesteBase
         $this->assertIgual(200, $relatorio->status);
         $this->assertContem('%PDF-1.4', $relatorio->html);
         $this->assertContem('Relatório de atendimentos', $relatorio->html);
+    }
+
+    public function testeImpedeConflitoDeHorarioDoVeterinario(): void
+    {
+        $dataHora = '2026-12-10 10:00:00';
+
+        $this->modelo->criar([
+            'animal_id' => $this->idsRelacoes['animal_id'],
+            'veterinario_id' => $this->idsRelacoes['veterinario_id'],
+            'procedimento_id' => $this->idsRelacoes['procedimento_id'],
+            'data_hora' => $dataHora,
+            'valor_cobrado' => 10.5,
+            'observacoes_clinicas' => 'Primeiro atendimento',
+            'situacao' => 'agendado',
+            'usuario_id' => 1,
+        ]);
+
+        $resposta = $this->postar('atendimentos/salvar', [
+            'animal_id' => $this->idsRelacoes['animal_id'],
+            'veterinario_id' => $this->idsRelacoes['veterinario_id'],
+            'procedimento_id' => $this->idsRelacoes['procedimento_id'],
+            'data_hora' => $dataHora,
+            'valor_cobrado' => 20.5,
+            'observacoes_clinicas' => 'Segundo atendimento',
+            'situacao' => 'agendado',
+        ]);
+
+        $this->assertVerdadeiro(
+            $resposta->redirecionouPara('atendimentos/criar')
+        );
+
+        $this->assertIgual(1, $this->modelo->contar());
+    }
+
+
+    public function testePermiteMesmoHorarioParaVeterinariosDiferentes(): void
+    {
+        $dataHora = '2026-12-11 10:00:00';
+
+        $this->modelo->criar([
+            'animal_id' => $this->idsRelacoes['animal_id'],
+            'veterinario_id' => $this->idsRelacoes['veterinario_id'],
+            'procedimento_id' => $this->idsRelacoes['procedimento_id'],
+            'data_hora' => $dataHora,
+            'valor_cobrado' => 10.5,
+            'observacoes_clinicas' => 'Primeiro atendimento',
+            'situacao' => 'agendado',
+            'usuario_id' => 1,
+        ]);
+
+        $resposta = $this->postar('atendimentos/salvar', [
+            'animal_id' => $this->idsRelacoes['animal_id'],
+            'veterinario_id' => $this->idsRelacoesAtualizadas['veterinario_id'],
+            'procedimento_id' => $this->idsRelacoes['procedimento_id'],
+            'data_hora' => $dataHora,
+            'valor_cobrado' => 20.5,
+            'observacoes_clinicas' => 'Segundo atendimento',
+            'situacao' => 'agendado',
+        ]);
+
+        $this->assertVerdadeiro(
+            $resposta->redirecionouPara('atendimentos/ver/2')
+        );
+
+        $this->assertIgual(2, $this->modelo->contar());
+    }
+
+
+    public function testeImpedeAgendamentoNoPassado(): void
+    {
+        $resposta = $this->postar('atendimentos/salvar', [
+            'animal_id' => $this->idsRelacoes['animal_id'],
+            'veterinario_id' => $this->idsRelacoes['veterinario_id'],
+            'procedimento_id' => $this->idsRelacoes['procedimento_id'],
+            'data_hora' => '2020-01-01 10:00:00',
+            'valor_cobrado' => 10.5,
+            'observacoes_clinicas' => 'Teste de data passada',
+            'situacao' => 'agendado',
+        ]);
+
+        $this->assertVerdadeiro(
+            $resposta->redirecionouPara('atendimentos/criar')
+        );
+
+        $this->assertIgual(0, $this->modelo->contar());
+    }
+
+
+    public function testeRegistraUsuarioAutenticadoNoAtendimento(): void
+    {
+        $resposta = $this->postar('atendimentos/salvar', [
+            'animal_id' => $this->idsRelacoes['animal_id'],
+            'veterinario_id' => $this->idsRelacoes['veterinario_id'],
+            'procedimento_id' => $this->idsRelacoes['procedimento_id'],
+            'data_hora' => '2026-12-12 10:00:00',
+            'valor_cobrado' => 10.5,
+            'observacoes_clinicas' => 'Teste de autoria',
+            'situacao' => 'agendado',
+        ]);
+
+        $this->assertVerdadeiro(
+            $resposta->redirecionouPara('atendimentos/ver/1')
+        );
+
+        $registro = $this->modelo->buscar(1);
+
+        $this->assertNaoNulo($registro);
+        $this->assertIgual(1, (int) $registro['usuario_id']);
+    }
+
+    public function testeFiltraAtendimentosPorPeriodo(): void
+    {
+        Database::conexao()->exec("
+        UPDATE animais
+        SET nome = CASE
+            WHEN id = {$this->idsRelacoes['animal_id']} THEN 'Animal Dentro Periodo'
+            WHEN id = {$this->idsRelacoesAtualizadas['animal_id']} THEN 'Animal Fora Periodo'
+        END
+    ");
+
+        $this->modelo->criar([
+            'animal_id' => $this->idsRelacoes['animal_id'],
+            'veterinario_id' => $this->idsRelacoes['veterinario_id'],
+            'procedimento_id' => $this->idsRelacoes['procedimento_id'],
+            'data_hora' => '2026-10-10 10:00:00',
+            'valor_cobrado' => 10.5,
+            'observacoes_clinicas' => 'Primeiro atendimento',
+            'situacao' => 'agendado',
+            'usuario_id' => 1,
+        ]);
+
+        $this->modelo->criar([
+            'animal_id' => $this->idsRelacoesAtualizadas['animal_id'],
+            'veterinario_id' => $this->idsRelacoesAtualizadas['veterinario_id'],
+            'procedimento_id' => $this->idsRelacoesAtualizadas['procedimento_id'],
+            'data_hora' => '2026-11-10 10:00:00',
+            'valor_cobrado' => 20.5,
+            'observacoes_clinicas' => 'Segundo atendimento',
+            'situacao' => 'agendado',
+            'usuario_id' => 1,
+        ]);
+
+        $resposta = $this->requisitar('atendimentos', 'GET', [
+            'data_inicial' => '2026-10-01',
+            'data_final' => '2026-10-31',
+        ]);
+
+        $this->assertIgual(200, $resposta->status);
+        $this->assertContem('Animal Dentro Periodo', $resposta->html);
+        $this->assertNaoContem('Animal Fora Periodo', $resposta->html);
     }
 
     public function testeExigeLoginNasRotas(): void

@@ -33,12 +33,46 @@ class AtendimentosController extends Controller
         $condicoes = [];
         $parametros = [];
 
+        $dataInicial = $this->get('data_inicial');
+        $dataFinal = $this->get('data_final');
+
+        if (
+            is_scalar($dataInicial)
+            && is_scalar($dataFinal)
+            && (string) $dataInicial !== ''
+            && (string) $dataFinal !== ''
+            && (string) $dataInicial > (string) $dataFinal
+        ) {
+            $this->mensagem(
+                'erro',
+                'A data inicial não pode ser posterior à data final.'
+            );
+
+            $this->redirecionar('atendimentos');
+        }
+
         $termo = $this->get('data_hora');
 
         if (is_scalar($termo) && (string) $termo !== '') {
             $pesquisa['data_hora'] = (string) $termo;
             $condicoes[] = '`data_hora` LIKE ? ESCAPE ' . Sql::ESCAPE_LIKE;
             $parametros[] = Sql::comoLike((string) $termo, 'inicio');
+        }
+
+        $termo = $this->get('data_inicial');
+
+        if (is_scalar($termo) && (string) $termo !== '') {
+            $pesquisa['data_inicial'] = (string) $termo;
+            $condicoes[] = '`data_hora` >= ?';
+            $parametros[] = (string) $termo . ' 00:00:00';
+        }
+
+        $termo = $this->get('data_final');
+
+        if (is_scalar($termo) && (string) $termo !== '') {
+            $pesquisa['data_final'] = (string) $termo;
+            $condicoes[] = '`data_hora` <= ?';
+            $parametros[] = (string) $termo . ' 23:59:59';
         }
 
         $termo = $this->get('veterinario_id');
