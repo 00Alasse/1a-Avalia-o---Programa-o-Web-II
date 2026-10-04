@@ -21,14 +21,43 @@ class AtendimentosController extends Controller
     {
         $this->exigirAutenticacao();
 
-        // ----- scaffold:pesquisa inicio -----
-        // O formulario acima da tabela manda os campos pela query string:
-        //     /atendimentos?data_hora=...
-        // Campo em branco e ignorado, entao a lista completa continua
-        // aparecendo enquanto ninguem pesquisar nada.
-        //
-        // Os VALORES vao como "?" (parametros do PDO). So os nomes de
-        // coluna entram no texto do SQL, e eles sao fixos aqui.
+        [$pesquisa, $registros] = $this->consultarAtendimentosFiltrados();
+
+        $animais = $this->modelo->animais();
+        $veterinarios = $this->modelo->veterinarios();
+        $procedimentos = $this->modelo->procedimentos();
+
+        $animaisPorId = array_column($animais, null, 'id');
+        $veterinariosPorId = array_column($veterinarios, null, 'id');
+        $procedimentosPorId = array_column($procedimentos, null, 'id');
+
+        // RF13: Totais calculados sobre os resultados filtrados
+        $totalAtendimentos = count($registros);
+        $somaValores = array_sum(array_column($registros, 'valor_cobrado'));
+
+        $this->view('atendimentos/index', [
+            'titulo' => 'Atendimentos',
+            'registros' => $registros,
+            'pesquisa' => $pesquisa,
+            'veterinarios' => $veterinarios,
+            'animaisPorId' => $animaisPorId,
+            'veterinariosPorId' => $veterinariosPorId,
+            'procedimentosPorId' => $procedimentosPorId,
+            'totalAtendimentos' => $totalAtendimentos,
+            'somaValores' => $somaValores,
+        ]);
+    }
+
+    /**
+     * Monta os filtros da listagem e consulta os atendimentos.
+     *
+     * Retorna os mesmos dados usados pela tela e pelo CSV, garantindo
+     * que a exportação respeite exatamente os filtros da pesquisa.
+     *
+     * @return array{0:array<string,string>,1:array<int,array<string,mixed>>}
+     */
+    private function consultarAtendimentosFiltrados(): array
+    {
         $pesquisa = [];
         $condicoes = [];
         $parametros = [];
@@ -98,33 +127,98 @@ class AtendimentosController extends Controller
         }
 
         $sql .= ' ORDER BY `id` DESC';
-        // ----- scaffold:pesquisa fim -----
 
         $registros = $this->modelo->consultar($sql, $parametros);
 
-        $animais = $this->modelo->animais();
-        $veterinarios = $this->modelo->veterinarios();
-        $procedimentos = $this->modelo->procedimentos();
+        return [$pesquisa, $registros];
+    }
 
-        $animaisPorId = array_column($animais, null, 'id');
-        $veterinariosPorId = array_column($veterinarios, null, 'id');
-        $procedimentosPorId = array_column($procedimentos, null, 'id');
+    /** GET /atendimentos/exportar-csv */
+    public function exportarCsv(): void
+    {
+        $this->exigirAutenticacao();
 
-        // RF13: Totais calculados sobre os resultados filtrados
-        $totalAtendimentos = count($registros);
-        $somaValores = array_sum(array_column($registros, 'valor_cobrado'));
+        [, $registros] = $this->consultarAtendimentosFiltrados();
 
-        $this->view('atendimentos/index', [
-            'titulo' => 'Atendimentos',
-            'registros' => $registros,
-            'pesquisa' => $pesquisa,
-            'veterinarios' => $veterinarios,
-            'animaisPorId' => $animaisPorId,
-            'veterinariosPorId' => $veterinariosPorId,
-            'procedimentosPorId' => $procedimentosPorId,
-            'totalAtendimentos' => $totalAtendimentos,
-            'somaValores' => $somaValores,
-        ]);
+        $animais = array_column(
+            $this->modelo->animais(),
+            null,
+            'id'
+        );
+
+        $veterinarios = array_column(
+            $this->modelo->veterinarios(),
+            null,
+            'id'
+        );
+
+        $procedimentos = array_column(
+            $this->modelo->procedimentos(),
+            null,
+            'id'
+        );
+
+        $linhas = [];
+
+        $linhas[] = [
+            'ID',
+            'Animal',
+            'Veterinário',
+            'Procedimento',
+            'Data e Horário',
+            'Valor Cobrado',
+            'Situação',
+        ];
+
+        foreach ($registros as $registro) {
+            $animal = $animais[$registro['animal_id']] ?? null;
+            $veterinario = $veterinarios[$registro['veterinario_id']] ?? null;
+            $procedimento = $procedimentos[$registro['procedimento_id']] ?? null;
+
+            $dataHora = '';
+            if (!empty($registro['data_hora'])) {
+                try {
+                    $dataHora = (new \DateTime($registro['data_hora']))
+                        ->format('d/m/Y H:i');
+                } catch (\Exception $e) {
+                    $dataHora = $registro['data_hora'];
+                }
+            }
+
+            $linhas[] = [
+                $registro['id'] ?? '',
+                $animal['nome'] ?? 'Animal não encontrado',
+                $veterinario['nome'] ?? 'Veterinário não encontrado',
+                $procedimento['descricao'] ?? 'Procedimento não encontrado',
+                $dataHora,
+                isset($registro['valor_cobrado'])
+                ? 'R$ ' . number_format(
+                    (float) $registro['valor_cobrado'],
+                    2,
+                    ',',
+                    '.'
+                )
+                : 'R$ 0,00',
+                $registro['situacao'] ?? '',
+            ];
+        }
+
+        $fp = fopen('php://temp', 'r+');
+
+        foreach ($linhas as $linha) {
+            fputcsv($fp, $linha, ';');
+        }
+
+        rewind($fp);
+
+        $conteudo = stream_get_contents($fp);
+
+        fclose($fp);
+
+        // BOM UTF-8: faz o Excel reconhecer corretamente acentos.
+        $conteudo = "\xEF\xBB\xBF" . $conteudo;
+
+        $this->csv($conteudo, 'atendimentos.csv');
     }
 
     /** GET /atendimentos/criar */

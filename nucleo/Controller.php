@@ -40,7 +40,7 @@ abstract class Controller
     /**
      * Instancia um modelo da pasta "modelos".
      *
-    *     $produtos = $this->modelo('Produto');
+     *     $produtos = $this->modelo('Produto');
      */
     protected function modelo(string $nome): Model
     {
@@ -83,7 +83,7 @@ abstract class Controller
     protected function todosOsCampos(): array
     {
         return array_map(
-            fn ($valor) => is_string($valor) ? trim($valor) : $valor,
+            fn($valor) => is_string($valor) ? trim($valor) : $valor,
             $_POST
         );
     }
@@ -147,7 +147,7 @@ abstract class Controller
     /**
      * Manda o navegador para outra rota interna.
      *
-    *     $this->redirecionar('produtos');
+     *     $this->redirecionar('produtos');
      */
     protected function redirecionar(string $rota = ''): never
     {
@@ -174,6 +174,20 @@ abstract class Controller
         if (PHP_SAPI !== 'cli' && !headers_sent()) {
             header('Content-Type: application/pdf');
             header('Content-Disposition: inline; filename="' . $arquivo . '"');
+            header('Content-Length: ' . strlen($conteudo));
+            header('X-Content-Type-Options: nosniff');
+        }
+
+        echo $conteudo;
+    }
+
+    protected function csv(string $conteudo, string $arquivo = 'relatorio.csv'): void
+    {
+        $arquivo = preg_replace('/[^A-Za-z0-9._-]/', '_', basename($arquivo)) ?: 'relatorio.csv';
+
+        if (PHP_SAPI !== 'cli' && !headers_sent()) {
+            header('Content-Type: text/csv; charset=UTF-8');
+            header('Content-Disposition: attachment; filename="' . $arquivo . '"');
             header('Content-Length: ' . strlen($conteudo));
             header('X-Content-Type-Options: nosniff');
         }
@@ -310,7 +324,7 @@ abstract class Controller
         }
 
         $caminho = (string) (parse_url($referencia, PHP_URL_PATH) ?: '');
-        $base    = (string) (parse_url(url_base(), PHP_URL_PATH) ?: '');
+        $base = (string) (parse_url(url_base(), PHP_URL_PATH) ?: '');
 
         if ($base !== '' && $base !== '/' && str_starts_with($caminho, $base)) {
             $caminho = substr($caminho, strlen($base));

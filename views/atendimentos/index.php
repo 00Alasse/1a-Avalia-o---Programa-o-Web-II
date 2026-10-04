@@ -1,3 +1,11 @@
+<?php
+$urlExportarCsv = url('atendimentos/exportar-csv');
+
+if (($pesquisa ?? []) !== []) {
+    $urlExportarCsv .= '?' . http_build_query($pesquisa);
+}
+?>
+
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
     <div>
         <h1 class="h3 mb-1">Atendimentos</h1>
@@ -6,6 +14,10 @@
     <div class="d-flex flex-wrap gap-2">
         <a class="btn btn-outline-secondary" href="<?= url('atendimentos/relatorio') ?>">
             Relatório PDF
+        </a>
+
+        <a class="btn btn-outline-success" href="<?= e($urlExportarCsv) ?>">
+            Exportar CSV
         </a>
 
         <a class="btn btn-outline-primary" href="<?= url('atendimentos/relatorio-agenda') ?>">
